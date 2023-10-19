@@ -1,0 +1,72 @@
+const failure = {
+    already_exist:{
+        "code":1,
+        "message":"users_already_exists"
+    },
+    user_name_already_exist:{
+        "code":2,
+        "message":"users_name_already_exists"
+    },
+    password_must_be_greater_than_eight_characters:{
+        "code":3,
+        "message":"password_must_be_greater_than_eight_characters"
+    },
+    user_name_is_not_exist:{
+        "code":4,
+        "message":"users_name_is_not_exists"
+    },
+    account_is_not_verified:{
+        "code":5,
+        "message":"account_is_not_verified"
+    },
+    wrong_password:{
+        "code":6,
+        "message":"wrong_password"
+    },
+    must_be_login:{
+        "code":7,
+        "message":"must_be_login"
+    },
+    token_wrong:{
+        "code":8,
+        "message":"token_wrong"
+    },
+    account_not_found:{
+        "code":9,
+        "message":"account_not_found"
+    },
+    user_name_to_short:{
+        "code":10,
+        "message":"user_name_to_short"
+    },
+    account_already_verified:{
+        "code":11,
+        "message":"account_already_verified"
+    }
+        
+}
+const successfuly = {
+    register_added:{
+        "code":200,
+        "message":"users_added"
+    },
+    login_successfuly:{
+        "code":200,
+        "message":"login_successfuly"
+    },
+    account_verified:{
+        "code":200,
+        "message":"account_verified"
+    },
+    sent_again:{
+        "code":200,
+        "message":"sent_again"
+    },
+    mail_sended:{
+        "code":200,
+        "message":"mail_sended"
+    }
+}
+
+module.exports = {failure,successfuly};
+
