@@ -42,13 +42,49 @@ const failure = {
     account_already_verified:{
         "code":11,
         "message":"account_already_verified"
-    }
+    },
+    you_must_be_login:{
+        "code":11,
+        "message":"you_must_be_login"
+    },
+    wrong_token:{
+        "code":11,
+        "message":"wrong_token"
+    },
+    email_not_send:{
+        "code":19,
+        "message":"email_not_send"
+    },
+    you_must_write_different_username:{
+        "code":19,
+        "message":"you_must_write_different_username"
+    },
+        server_error:{
+        "code":19,
+        "message":"server_error"
+    },
+    Your_new_password_cannot_be_the_same_as_your_old_password:{
+        "code":19,
+        "message":"Your_new_password_cannot_be_the_same_as_your_old_password"
+    },
+    post_not_found:{
+        "code":9,
+        "message":"post_not_found"
+    },
+    post_not_update:{
+        "code":9,
+        "message":"update"
+    },
         
 }
 const successfuly = {
-    register_added:{
+    register_added_and_email_sended:{
         "code":200,
-        "message":"users_added"
+        "message":"register_added_and_email_sended"
+    },
+    register_added_but_email_not_send:{
+        "code":200,
+        "message":"register_added_but_email_not_send"
     },
     login_successfuly:{
         "code":200,
@@ -62,10 +98,26 @@ const successfuly = {
         "code":200,
         "message":"sent_again"
     },
-    mail_sended:{
+    email_sended:{
         "code":200,
-        "message":"mail_sended"
-    }
+        "message":"email_sended"
+    },
+    email_sended:{
+        "code":11,
+        "message":"email_sended"
+    },
+    password_changed:{
+        "code":11,
+        "message":"password_changed"
+    },
+    post_adedd:{
+        "code":11,
+        "message":"post_adedd"
+    },
+    post_updated:{
+        "code":11,
+        "message":"post_updated"
+    },
 }
 
 module.exports = {failure,successfuly};

@@ -7,7 +7,7 @@ const verify = async (req,res) => {
             const sqlForId = 'SELECT * FROM users WHERE id = ?';
         const id = req.params.id;
         const user = await dbhelper(sqlForId,id);
-        if(user[0]?.id>0){;
+        if(user[0]?.id){;
             const sql = 'UPDATE users SET status = true WHERE id = ?';
             await dbhelper(sql,id);
             resolve(successfuly.account_verified);
@@ -20,11 +20,12 @@ const verify = async (req,res) => {
     })
 }
 const againMailVerification = async (req,res) => {
-    return new Promise((resolve)=>{
+    return new Promise(async (resolve)=>{
         try {
             const email = req.body.email;
             const sqlForEmail = 'SELECT * FROM users WHERE email = ?';
-            const user = dbhelper(sqlForEmail,email);
+            const user = await dbhelper(sqlForEmail,email);
+            console.log(user[0]?.username.length)
             if(user[0]?.username.length>0){
                 if(user[0]?.status==0){
                     sendmail(req.body.email,user[0]?.id);

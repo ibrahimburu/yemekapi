@@ -1,11 +1,12 @@
 const  {dbhelper} = require('../models/database');
 const {failure, successfuly} = require('../responses/responses');
 const {encrypt,decrypt} = require('../hash/crptpass');
-const sendmail = require('../nodemailer/sendMail');
+const {sendmail} = require('../nodemailer/sendMail');
+const { v1: uuidv1 } = require('uuid');
 
 const register = async (req,res) =>{
     return new Promise (async(resolve)=>{
-        const sql = 'select * from users ';
+        const sql = 'select * from posts ';
         resolve(await dbhelper(sql));
     })       
 }
@@ -29,7 +30,7 @@ const create_newUser = async (req,res) =>{
                 resolve(failure.password_must_be_greater_than_eight_characters);
             }else{
                 const newUser = {
-                    id:req.body.id,
+                    id:uuidv1(),
                     username:req.body.username,
                     email:req.body.email,
                     password:encrypt(req.body.password),
@@ -39,14 +40,57 @@ const create_newUser = async (req,res) =>{
                 }
                 const registered = await dbhelper(sqlForRegister,newUser);
                 if(registered?.protocol41){
-                    resolve(successfuly.register_added);
+                    const result = await sendmail(req.body.email,newUser.id);
+                    if(result.code==11){
+                        resolve(successfuly.register_added_and_email_sended);
+                    }else{
+                        resolve(successfuly.register_added_but_email_not_send);
+                    }
                 }
                 resolve(registered);
-                sendmail(req.body.email,req.body.id);
+                
             }
         } catch (err) {
             resolve(err);
         }
     })
 }
-module.exports = { register, create_newUser };
+//aynı token ile kullanıcı adı değiştirildiğinde eski kullanıcı adının aynısı tekrar yazılabiliyor
+const update_username = async (req,res) =>{
+    return new Promise(async (resolve)=>{
+        try {
+            const sqlForToken ='SELECT * FROM token WHERE token = ?';
+            const token = req.body.token;
+            const sqlForid = 'SELECT * FROM users WHERE id = ?';
+            const sqlForUserName = 'SELECT * FROM users WHERE username = ?';
+            const sqlForUpdate = 'UPDATE users SET username = ? where id = ?';
+            const userid = req.id;
+            const username = req.username;
+            const isLogin = await dbhelper(sqlForToken,token);
+            console.log(isLogin)
+            if(isLogin==null||isLogin.fatal==true){//diğer bütün if elsler böyle olmalı
+                if(isLogin==null){
+                    resolve(failure.you_must_be_login);
+                }else{resolve(failure.server_error)}
+                
+            }else{
+                const user = await dbhelper(sqlForid,userid);
+                if(user[0]?.username.length>0){
+                    if(req.body.newusername.length>=4){
+                        if(username!=req.body.newusername){
+                            const already_existt =await dbhelper(sqlForUserName,req.body.newusername);
+                            console.log(!(already_existt[0]))
+                            if(!(already_existt[0])){
+                                const updateValues = [req.body.newusername, req.id];
+                            resolve(await dbhelper(sqlForUpdate, updateValues));
+                            }else{resolve(failure.user_name_already_exist);}
+                        }else{resolve(failure.you_must_write_different_username);}
+                    }else{resolve(failure.user_name_to_short);}
+                }else{resolve(failure.account_not_found);}
+            }
+        } catch (error) {
+            resolve(error);
+        }
+    });
+}
+module.exports = { register, create_newUser, update_username };

@@ -5,6 +5,8 @@ const db = require('./models/database');
 const registerRouter = require('./routes/registerRouter');
 const loginRouter = require('./routes/loginRouter');
 const verifyRouter = require('./routes/verifyRouter');
+const passwordRouter = require('./routes/passwordRouter');
+const postRouter = require('./routes/postRouter');
 
 dotenv.config();
 
@@ -19,6 +21,8 @@ app.get('/', (req,res) =>{
 app.use('/api/register',registerRouter);
 app.use('/api/login',loginRouter);
 app.use('/api/verify',verifyRouter);
+app.use('/api/password',passwordRouter);
+app.use('/api/post',postRouter);
 
 const PORT = process.env.PORT || 8088;
 
