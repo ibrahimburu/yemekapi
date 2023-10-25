@@ -4,9 +4,11 @@ const {auth} = require('../middlewares/authMiddlewares');
 const{addpost, postedit} = require('../controllers/post');
 
 postRouter.post('/addpost', auth, async(req,res)=>{
-    res.json(await addpost(req));
+    const result = await addpost(req);
+    res.statusCode(result.code).json(result);
 })
 postRouter.put('/postedit', auth, async(req,res)=>{
-    res.json(await postedit(req));
+    const result = await postedit(req);
+    res.statusCode(result.code).json(result);
 })
 module.exports = postRouter;

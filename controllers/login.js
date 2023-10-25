@@ -16,11 +16,15 @@ const login = async(req,res)=>{
                 resolve(failure.wrong_password);
             }else{
                 
-                const token = {
-                    token:await generateRefreshToken(isUser[0]),
-                }
+                    const token = await generateRefreshToken(isUser[0]);
+                
                 await dbhelper(sqlForToken,token);
-                resolve(successfuly.login_successfuly);
+                const message = {
+                    "code":successfuly.login_successfuly.code,
+                    "message":successfuly.login_successfuly.message,
+                    "token":token
+                }
+                resolve(message);
 
             }
         

@@ -7,6 +7,7 @@ const loginRouter = require('./routes/loginRouter');
 const verifyRouter = require('./routes/verifyRouter');
 const passwordRouter = require('./routes/passwordRouter');
 const postRouter = require('./routes/postRouter');
+const useroperationsRouter = require('./routes/useroperationsRouter');
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use('/api/login',loginRouter);
 app.use('/api/verify',verifyRouter);
 app.use('/api/password',passwordRouter);
 app.use('/api/post',postRouter);
+app.use('/api/useroperations',useroperationsRouter);
 
 const PORT = process.env.PORT || 8088;
 

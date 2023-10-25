@@ -1,122 +1,166 @@
 const failure = {
     already_exist:{
-        "code":1,
-        "message":"users_already_exists"
+        "code":400,
+        "message":"users_already_exists",
+        "status":false
     },
     user_name_already_exist:{
-        "code":2,
-        "message":"users_name_already_exists"
+        "code":400,
+        "message":"users_name_already_exists",
+        "status":false
     },
     password_must_be_greater_than_eight_characters:{
-        "code":3,
-        "message":"password_must_be_greater_than_eight_characters"
+        "code":400,
+        "message":"password_must_be_greater_than_eight_characters",
+        "status":false
     },
     user_name_is_not_exist:{
-        "code":4,
-        "message":"users_name_is_not_exists"
+        "code":400,
+        "message":"users_name_is_not_exists",
+        "status":false
     },
     account_is_not_verified:{
-        "code":5,
-        "message":"account_is_not_verified"
+        "code":400,
+        "message":"account_is_not_verified",
+        "status":false
     },
     wrong_password:{
-        "code":6,
-        "message":"wrong_password"
+        "code":400,
+        "message":"wrong_password",
+        "status":false
     },
     must_be_login:{
-        "code":7,
-        "message":"must_be_login"
+        "code":400,
+        "message":"must_be_login",
+        "status":false
     },
     token_wrong:{
-        "code":8,
-        "message":"token_wrong"
+        "code":400,
+        "message":"token_wrong",
+        "status":false
     },
     account_not_found:{
-        "code":9,
-        "message":"account_not_found"
+        "code":400,
+        "message":"account_not_found",
+        "status":false
     },
     user_name_to_short:{
-        "code":10,
-        "message":"user_name_to_short"
+        "code":400,
+        "message":"user_name_to_short",
+        "status":false
     },
     account_already_verified:{
-        "code":11,
-        "message":"account_already_verified"
+        "code":400,
+        "message":"account_already_verified",
+        "status":false
     },
     you_must_be_login:{
-        "code":11,
-        "message":"you_must_be_login"
+        "code":400,
+        "message":"you_must_be_login",
+        "status":false
     },
     wrong_token:{
-        "code":11,
-        "message":"wrong_token"
+        "code":400,
+        "message":"wrong_token",
+        "status":false
     },
     email_not_send:{
-        "code":19,
-        "message":"email_not_send"
+        "code":400,
+        "message":"email_not_send",
+        "status":false
     },
     you_must_write_different_username:{
-        "code":19,
-        "message":"you_must_write_different_username"
+        "code":400,
+        "message":"you_must_write_different_username",
+        "status":false
     },
         server_error:{
-        "code":19,
-        "message":"server_error"
+        "code":400,
+        "message":"server_error",
+        "status":false
     },
     Your_new_password_cannot_be_the_same_as_your_old_password:{
-        "code":19,
-        "message":"Your_new_password_cannot_be_the_same_as_your_old_password"
+        "code":400,
+        "message":"Your_new_password_cannot_be_the_same_as_your_old_password",
+        "status":false
     },
     post_not_found:{
-        "code":9,
-        "message":"post_not_found"
+        "code":400,
+        "message":"post_not_found",
+        "status":false
     },
     post_not_update:{
-        "code":9,
-        "message":"update"
+        "code":400,
+        "message":"update",
+        "status":false
+    },
+    user_not_found:{
+        "code":400,
+        "message":"user_not_found",
+        "status":false
+    },
+    no_result:{
+        "code":400,
+        "message":"no_result",
+        "status":false
     },
         
 }
 const successfuly = {
     register_added_and_email_sended:{
         "code":200,
-        "message":"register_added_and_email_sended"
+        "message":"register_added_and_email_sended",
+        "status":true
     },
     register_added_but_email_not_send:{
         "code":200,
-        "message":"register_added_but_email_not_send"
+        "message":"register_added_but_email_not_send",
+        "status":true
     },
     login_successfuly:{
         "code":200,
-        "message":"login_successfuly"
+        "message":"login_successfuly",
+        "status":true
     },
     account_verified:{
         "code":200,
-        "message":"account_verified"
+        "message":"account_verified",
+        "status":true
     },
     sent_again:{
         "code":200,
-        "message":"sent_again"
+        "message":"sent_again",
+        "status":true
     },
     email_sended:{
         "code":200,
-        "message":"email_sended"
+        "message":"email_sended",
+        "status":true
     },
     email_sended:{
-        "code":11,
-        "message":"email_sended"
+        "code":200,
+        "message":"email_sended",
+        "status":true
     },
     password_changed:{
-        "code":11,
-        "message":"password_changed"
+        "code":200,
+        "message":"password_changed",
+        "status":true
     },
     post_adedd:{
-        "code":11,
-        "message":"post_adedd"
+        "code":200,
+        "message":"post_adedd",
+        "status":true
     },
     post_updated:{
-        "code":11,
-        "message":"post_updated"
+        "code":200,
+        "message":"post_updated",
+        "status":true
+    },
+    like_added:{
+        "code":200,
+        "message":"like_added",
+        "status":true
     },
 }
 

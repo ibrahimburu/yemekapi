@@ -7,9 +7,11 @@ loginRouter.get('/',async (req,res)=>{
 
 });
 loginRouter.post('/',async (req,res)=>{
-    res.json(await login(req));
+    const result = await login(req);
+    res.statusCode(result.code).json(result);
 });
 loginRouter.post('/forgotpassword',async (req,res)=>{
-    res.json(await forgotPassword(req));
+    const result = await forgotPassword(req);
+    res.statusCode(result.code).json(result);
 });
 module.exports = loginRouter;
