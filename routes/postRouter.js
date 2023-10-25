@@ -5,10 +5,10 @@ const{addpost, postedit} = require('../controllers/post');
 
 postRouter.post('/addpost', auth, async(req,res)=>{
     const result = await addpost(req);
-    res.statusCode(result.code).json(result);
+    res.status(result.code).json(result);
 })
 postRouter.put('/postedit', auth, async(req,res)=>{
     const result = await postedit(req);
-    res.statusCode(result.code).json(result);
+    res.status(result.code).json(result);
 })
 module.exports = postRouter;

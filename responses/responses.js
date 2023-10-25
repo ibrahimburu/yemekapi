@@ -162,6 +162,11 @@ const successfuly = {
         "message":"like_added",
         "status":true
     },
+    comment_added:{
+        "code":200,
+        "message":"comment_added",
+        "status":true
+    },
 }
 
 module.exports = {failure,successfuly};

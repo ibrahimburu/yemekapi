@@ -1,7 +1,7 @@
 const { v1: uuidv1 } = require('uuid');
 const {dbhelper} = require('../models/database');
 const {failure, uccessfuly, successfuly} = require('../responses/responses');
-const notification = async(notification)=>{
+const notifications = async(notification)=>{
     return new Promise(async(resolve)=>{
         const sqlForNotification = 'INSERT INTO notifications SET ?'
         const addnotification ={
@@ -22,4 +22,4 @@ const notification = async(notification)=>{
         }
     })
 }
-module.exports = notification;
+module.exports = notifications;

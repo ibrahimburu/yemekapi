@@ -1,6 +1,7 @@
 const {dbhelper} = require('../models/database');
 const {failure, successfuly} = require('../responses/responses');
 const { v1: uuidv1 } = require('uuid');
+const notifications = require('../controllers/notifications');
 const follow = async(req,res)=>{
     return new Promise(async(resolve)=>{
          const sql = 'INSERT INTO  follewers SET ?';
@@ -29,7 +30,7 @@ const followerrequest = async(req,res)=>{
     }; 
  const search = async(req,res)=>{
     return new Promise(async(resolve)=>{
-        const sqlForUsreName = 'SELECT *FROM users WHERE useername LIKE ?';
+        const sqlForUsreName = 'SELECT *FROM users WHERE username LIKE ?';
         const name = `${req.body.username}%`;
         const result = await dbhelper(sqlForUsreName,name);
         if(result==null||result.fatal==true){//diğer bütün if elsler böyle olmalı
@@ -47,46 +48,55 @@ const liked = async(req,res)=>{
          const newlike = {
             id:uuidv1(),
             user_id:req.id,
-            post_id:req.postid,
+            post_id:postid,
          };
-         const like = await dbhelper(sql,newlike);
-        if(like==null||like.fatal==true){
-            resolve(failure.server_error)          
+        const postavailable = await dbhelper(sqlForPostid,postid);
+        if(postavailable==null||postavailable.fatal==true){
+            resolve(failure.post_not_found);
         }else{
-            const findpostowner = dbhelper(sqlForPostid,postid);
-            if(findpostowner.fatal==true){
+            const like = await dbhelper(sql,newlike);
+            if(like==null||like.fatal==true){
                 resolve(failure.server_error);
-            }else if(findpostowner==null){
-                resolve(failure.post_not_found);
             }else{
                 resolve(successfuly.like_added);
                 const notification = {
-                    target:findpostowner.user_id,
+                    target:postavailable[0]?.user_id,
                     source:req.id,
                     type:like,//bu ayarlanacak
                 }
+                notifications(notification);
             }
-        }//şimdilikböyle dursun
+        }
     })
     };
 const addcoment = async(req,res)=>{
     return new Promise(async(resolve)=>{
          const sql = 'INSERT INTO  comments SET ?';
+         const sqlForPostid = 'SELECT * FROM posts where id = ?';
+         const postid = req.body.post_id;
          const newcomment = {
             id:uuidv1(),
             user_id:req.id,
             post_id:req.body.post_id,
             body:req.body.body
          };
-         const comment = await dbhelper(sql,newcomment);
-        if(comment==null||comment.fatal==true){
-            resolve(failure.server_error)          
-        }else{resolve(successfuly.like_added);
-            const notification = {
-                target:findpostowner.user_id,
-                source:req.id,
-                type:like,//bu ayarlanacak
-            }}//şimdilikböyle dursun
+         const postavailable = await dbhelper(sqlForPostid,postid);
+         if(postavailable==null||postavailable.fatal==true){
+            resolve(failure.post_not_found);
+        }else{
+            const comment = await dbhelper(sql,newcomment);
+            if(comment==null||comment.fatal==true){
+                resolve(failure.server_error);
+            }else{
+                resolve(successfuly.comment_added);
+                const notification = {
+                    target:postavailable[0]?.user_id,
+                    source:req.id,
+                    type:comment,//bu ayarlanacak
+                }
+                notifications(notification);
+            }
+        }
     })
     };
 module.exports = {follow, search, followerrequest, liked, addcoment};

@@ -6,9 +6,8 @@ const { v1: uuidv1 } = require('uuid');
 
 const register = async (req,res) =>{
     return new Promise (async(resolve)=>{
-        const sql = 'select * from users WHERE username LIKE ? ';
-        const ast = "buru%";
-        resolve(await dbhelper(sql,ast));
+        const sql = 'select * from comments ';
+        resolve(await dbhelper(sql));
     })       
 }
 const create_newUser = async (req,res) =>{
