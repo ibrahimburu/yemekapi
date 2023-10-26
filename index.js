@@ -8,6 +8,8 @@ const verifyRouter = require('./routes/verifyRouter');
 const passwordRouter = require('./routes/passwordRouter');
 const postRouter = require('./routes/postRouter');
 const useroperationsRouter = require('./routes/useroperationsRouter');
+const imageRouter = require('./routes/imageRouter');
+const path = require('path');
 
 dotenv.config();
 
@@ -25,6 +27,20 @@ app.use('/api/verify',verifyRouter);
 app.use('/api/password',passwordRouter);
 app.use('/api/post',postRouter);
 app.use('/api/useroperations',useroperationsRouter);
+app.use('/images',(req,res)=>{
+    const options = {
+        root: path.join(__dirname)
+    };
+ 
+    const fileName = 'images/45270a00-740c-11ee-902d-77453c9d26bb.jpg';
+    res.sendFile(fileName, options, function (err) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log('Sent:', fileName);
+        }
+    });   
+});
 
 const PORT = process.env.PORT || 8088;
 

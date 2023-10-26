@@ -6,7 +6,7 @@ const { v1: uuidv1 } = require('uuid');
 
 const register = async (req,res) =>{
     return new Promise (async(resolve)=>{
-        const sql = 'select * from comments ';
+        const sql = 'select * from posts_image ';
         resolve(await dbhelper(sql));
     })       
 }

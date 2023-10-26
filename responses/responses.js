@@ -104,6 +104,12 @@ const failure = {
         "message":"no_result",
         "status":false
     },
+    avatar_not_added:{
+        "code":400,
+        "message":"avatar_not_added",
+        "status":false
+    },
+    
         
 }
 const successfuly = {
@@ -167,6 +173,16 @@ const successfuly = {
         "message":"comment_added",
         "status":true
     },
+    follow_request_sended:{
+        "code":200,
+        "message":"follow_request_sended",
+        "status":true
+    },
+    avatar_added:{
+        "code":200,
+        "message":"avatar_added",
+        "status":true
+    }
 }
 
 module.exports = {failure,successfuly};

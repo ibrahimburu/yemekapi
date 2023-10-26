@@ -2,30 +2,49 @@ const {dbhelper} = require('../models/database');
 const {failure, successfuly} = require('../responses/responses');
 const { v1: uuidv1 } = require('uuid');
 const notifications = require('../controllers/notifications');
+const upload = require('../multer/multer');
 const follow = async(req,res)=>{
     return new Promise(async(resolve)=>{
-         const sql = 'INSERT INTO  follewers SET ?';
-         const newfollower = {
-            id:req.body.followerid,
-            follower_id:req.id,
-            status:false
-         };
-         const followed = await dbhelper(sql,newfollower);
-        if(followed==null||followed.fatal==true){
-            resolve(failure.server_error)          
-        }else{resolve(successfuly.post_adedd);}//şimdilikböyle dursun
+         const sql = 'INSERT INTO  followers SET ?';
+         const sqlForUsername = 'SELECT * FROM users where username = ? ';
+         const username = req.body.username;
+         const result = await dbhelper(sqlForUsername,username);
+         if(result==null){
+            resolve(failure.server_error);
+         }else if(result.fatal==true){
+            resolve(failure.user_not_found);
+         }else{
+            const newfollower = {
+                user_id:result[0]?.id,
+                follower_id:req.id,
+                status:false
+             };
+             const followed = await dbhelper(sql,newfollower);
+            if(followed==null||followed.fatal==true){
+                resolve(failure.server_error)          
+            }else{resolve(successfuly.follow_request_sended);}
+         }
+         
     })
     };
 const followerrequest = async(req,res)=>{
     return new Promise(async(resolve)=>{
-         const sql = 'SELECT * FROM followers WHERE id = ? AND status = ?';
+         const sql = 'SELECT * FROM followers WHERE user_id = ? AND status = ?';
          const followrequset = [req.id,false];
          const request = await dbhelper(sql,followrequset);
+         console.log(req.id)
          if(request==null||request.fatal==true){//diğer bütün if elsler böyle olmalı
             if(request==null){
                 resolve(failure.no_result);
             }else{resolve(failure.server_error)}           
-        }else{resolve(request);}
+        }else{
+            const response = {
+                message:successfuly.comment_added.message,
+                code:successfuly.comment_added.code,
+                status:successfuly.comment_added.status,
+                users:request
+            }
+            resolve(response);}
     })
     }; 
  const search = async(req,res)=>{
@@ -37,7 +56,14 @@ const followerrequest = async(req,res)=>{
             if(result==null){
                 resolve(failure.user_not_found);
             }else{resolve(failure.server_error)}           
-        }else{resolve(result);}
+        }else{
+            const response = {
+                message:successfuly.comment_added.message,
+                code:successfuly.comment_added.code,
+                status:successfuly.comment_added.status,
+                users:result
+            }
+            resolve(response);}
      })
     };
 const liked = async(req,res)=>{
@@ -99,4 +125,23 @@ const addcoment = async(req,res)=>{
         }
     })
     };
-module.exports = {follow, search, followerrequest, liked, addcoment};
+const addavatar = async(req,res) => {
+    return new Promise(async(resolve)=>{
+        upload(req, res, async function (err) {
+            if (err) {
+                resolve(failure.avatar_not_added);
+            } else {
+                const sqlForUpdate = 'UPDATE users SET photo = ? where id = ?';
+                console.log(req.file.filename)
+                const image = req.file.filename;
+                const addimage = await dbhelper(sqlForUpdate, image);
+                if (addimage == null || addimage.fatal == true) {
+                    resolve(failure.server_error);
+                } else {
+                    resolve(successfuly.avatar_added);
+                }
+            }
+        })
+    })
+}
+module.exports = {follow, search, followerrequest, liked, addcoment, addavatar};
