@@ -27,20 +27,7 @@ app.use('/api/verify',verifyRouter);
 app.use('/api/password',passwordRouter);
 app.use('/api/post',postRouter);
 app.use('/api/useroperations',useroperationsRouter);
-app.use('/images',(req,res)=>{
-    const options = {
-        root: path.join(__dirname)
-    };
- 
-    const fileName = 'images/45270a00-740c-11ee-902d-77453c9d26bb.jpg';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });   
-});
+app.use('/images',imageRouter);
 
 const PORT = process.env.PORT || 8088;
 
