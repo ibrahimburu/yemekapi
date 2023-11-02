@@ -16,7 +16,7 @@ const forgot_password = async (req,res) => {
         }else{
            const token = await generatePasswordResetToken(result[0]);
            const sendmail = await sendmail_forpassword(result[0]?.email,token);
-           if(sendmail.code==11){
+           if(sendmail.code==successfuly.email_sended.code){
             resolve(successfuly.email_sended);
            }else{resolve(failure.email_not_send);}
         }

@@ -1,7 +1,7 @@
 const express = require('express');
 const useroperationsRouter = express.Router();
 const {auth} = require('../middlewares/authMiddlewares');
-const {follow, search, followerrequest, liked, addcoment, addavatar} = require('../controllers/followers');
+const {follow, search, followerrequest, liked, addcoment, addavatar, acceptfollowrequest, deletefollowrequest} = require('../controllers/followers');
 
 useroperationsRouter.post('/like',auth,async(req,res)=>{
     const result = await liked(req);
@@ -21,6 +21,14 @@ useroperationsRouter.post('/search',auth,async(req,res)=>{
 })
 useroperationsRouter.post('/followerequest',auth,async(req,res)=>{
     const result = await followerrequest(req);
+    res.status(result.code).json(result);
+})
+useroperationsRouter.post('/acceptfollowrequest',auth,async(req,res)=>{
+    const result = await acceptfollowrequest(req);
+    res.status(result.code).json(result);
+})
+useroperationsRouter.post('/deletefollowrequest',auth,async(req,res)=>{
+    const result = await deletefollowrequest(req);
     res.status(result.code).json(result);
 })
 useroperationsRouter.post('/addavatar',auth,async(req,res)=>{

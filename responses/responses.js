@@ -109,6 +109,11 @@ const failure = {
         "message":"avatar_not_added",
         "status":false
     },
+    there_is_nothing_to_show:{
+        "code":400,
+        "message":"there_is_nothing_to_show",
+        "status":false
+    }
     
         
 }
@@ -178,9 +183,34 @@ const successfuly = {
         "message":"follow_request_sended",
         "status":true
     },
+    follow_request_accepted:{
+        "code":200,
+        "message":"follow_request_accepted",
+        "status":true
+    },
+    follow_request_deleted:{
+        "code":200,
+        "message":"follow_request_deleted",
+        "status":true
+    },
+    follow_request_showed:{
+        "code":200,
+        "message":"follow_request_showed",
+        "status":true
+    },
     avatar_added:{
         "code":200,
         "message":"avatar_added",
+        "status":true
+    },
+    avatar_added:{
+        "code":200,
+        "message":"avatar_added",
+        "status":true
+    },
+    hompage_showed:{
+        "code":200,
+        "message":"hompage_showed",
         "status":true
     }
 }

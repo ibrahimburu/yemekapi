@@ -4,9 +4,8 @@ const path = require('path')
 
 imagesRouter.get('/:id',(req,res)=>{
     const options = {
-        root: path.join(__dirname)
+        root: path.join(__dirname,'..')
     };
- 
     const fileName = `images/${req.params.id}`;
     res.sendFile(fileName, options, function (err) {
         if (err) {
@@ -15,5 +14,9 @@ imagesRouter.get('/:id',(req,res)=>{
             console.log('Sent:', fileName);
         }
     });   
+})
+imagesRouter.post('/',(req,res)=>{
+    console.log(req);
+    res.json("hello");
 })
 module.exports = imagesRouter;

@@ -6,7 +6,7 @@ const { v1: uuidv1 } = require('uuid');
 
 const register = async (req,res) =>{
     return new Promise (async(resolve)=>{
-        const sql = 'select * from users ';
+        const sql = 'select * from posts_image ';
         resolve(await dbhelper(sql));
     })       
 }
@@ -41,7 +41,7 @@ const create_newUser = async (req,res) =>{
                 const registered = await dbhelper(sqlForRegister,newUser);
                 if(registered?.protocol41){
                     const result = await sendmail(req.body.email,newUser.id);
-                    if(result.code==11){
+                    if(result.code==successfuly.email_sended.code){
                         resolve(successfuly.register_added_and_email_sended);
                     }else{
                         resolve(successfuly.register_added_but_email_not_send);

@@ -9,6 +9,7 @@ const passwordRouter = require('./routes/passwordRouter');
 const postRouter = require('./routes/postRouter');
 const useroperationsRouter = require('./routes/useroperationsRouter');
 const imageRouter = require('./routes/imageRouter');
+const hompageRouter = require('./routes/hompageRouter');
 const path = require('path');
 
 dotenv.config();
@@ -27,7 +28,9 @@ app.use('/api/verify',verifyRouter);
 app.use('/api/password',passwordRouter);
 app.use('/api/post',postRouter);
 app.use('/api/useroperations',useroperationsRouter);
-app.use('/images',imageRouter);
+app.use('/api/hompage',hompageRouter);
+app.use('/api/images',imageRouter);
+app.use('/api/getimage',imageRouter);
 
 const PORT = process.env.PORT || 8088;
 

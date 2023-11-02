@@ -41,7 +41,7 @@ const sendmail_forpassword = async(email,token) => {
         from: '"buruSoftware 👻" <buru2425@mail.ru>', // sender address
         to: email, // list of receivers
         subject: "mail doğrulama", // Subject line
-        html:`<p>mailinizi doğrulmak için <a href ="${process.env.URL}/api/resetpassword/${token}" style = "color:red">buraya </a>tıklayın</p>`
+        html:`<p>şifrenizi sıfırlamak için için <a href ="${process.env.URL}/api/resetpassword/${token}" style = "color:red">buraya </a>tıklayın</p>`
       });
       return successfuly.email_sended;
     } catch (err) {

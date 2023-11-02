@@ -18,7 +18,7 @@ function generatePasswordResetToken(user) {
   };
 
   const secret = process.env.SCREETKEY;
-  const options = { expiresIn: '7d' };
+  const options = { expiresIn: '1d' };
 
   return jwt.sign(payload, secret, options);
 }

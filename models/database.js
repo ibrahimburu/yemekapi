@@ -13,7 +13,7 @@ const dbhelper = (sql,parametre) =>{
     return new Promise(resolve=>{
         pool.query(sql, parametre, (err, result, fields)=>{
             if(err){
-                resolve (err);
+                resolve(err);
             }
                 resolve(result);
         })

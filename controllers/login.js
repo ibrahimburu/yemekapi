@@ -15,16 +15,12 @@ const login = async(req,res)=>{
             }else if(isUser[0]?.password!=encrypt(req.body.password)){
                 resolve(failure.wrong_password);
             }else{
+                    
+                    const token = {token:await generateRefreshToken(isUser[0])};
                 
-                    const token = await generateRefreshToken(isUser[0]);
-                
-                await dbhelper(sqlForToken,token);
-                const message = {
-                    "code":successfuly.login_successfuly.code,
-                    "message":successfuly.login_successfuly.message,
-                    "token":token
-                }
-                resolve(message);
+               await dbhelper(sqlForToken,token)
+                successfuly.login_successfuly['token']=token.token
+                resolve(successfuly.login_successfuly);
 
             }
         
