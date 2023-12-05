@@ -15,6 +15,8 @@ const addpost = async(req,res)=>{
                     user_id:req.id,
                     status:true
                 }
+                console.log(post);
+                post.title==(undefined|""|null) ? resolve(failure.server_error):null;
                 const sqlForpsot = `INSERT INTO posts SET ?`;
                 const result = await dbhelper(sqlForpsot,post);
                 if(result==null||result.fatal==true){
@@ -23,6 +25,9 @@ const addpost = async(req,res)=>{
                     addpostimage(req,res,post.id,(err)=>{
                         resolve(err);
                     });//post eklendikten sonra fotoğraf eklenmezse postu geri sil
+                    addpostmaterial(req,res,post.id,(err)=>{
+                        resolve(err);
+                    })
                     resolve(successfuly.post_adedd);
                 }
             }
@@ -33,13 +38,28 @@ const addpost = async(req,res)=>{
 const addpostimage = async(req,res,id) => {
     return new Promise(async(resolve)=>{
         const sqlForPhoto = 'INSERT INTO posts_image SET ?';
-        for(let i = 0; i < req.files.length; i++){
+        for(let i = 0; i < req?.files?.length; i++){
             const photo ={
                 id: uuidv1(),
                 source:req.files[i].filename,
                 post_id:id
             }
             await dbhelper(sqlForPhoto,photo);
+        }
+        
+    })
+};
+const addpostmaterial = async(req,res,id) => {
+    return new Promise(async(resolve)=>{
+        const sqlForMaterial = 'INSERT INTO material SET ?';
+        for(let i = 0; i < req.body?.materials?.length; i++){
+            const material ={
+                id: uuidv1(),
+                title:req.body?.materials[i],
+                // amount:req.body?.materials[i].amount,
+                post_id:id
+            }
+            await dbhelper(sqlForMaterial,material);
         }
         
     })

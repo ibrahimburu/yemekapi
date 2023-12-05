@@ -1,17 +1,25 @@
 const jwt = require('jsonwebtoken');
 const {failure} = require('../responses/responses');
+const {dbhelper} = require('../models/database');
 require('dotenv').config();
-const auth = (req,res,next) => {
+const auth = async(req,res,next) => {
     const token = req.headers.token;
-
     if(token){
         try {
-            const decoded = jwt.verify(token, process.env.SCREETKEY);
-            req.id=decoded.id;
-            req.username=decoded.username;
+            const sqlFortoken = 'SELECT * FROM token WHERE token = ?';
+            const tokenexist =await dbhelper(sqlFortoken,token);
+            if(tokenexist==''){
+              res.status(failure.you_must_be_login.code).json(failure.you_must_be_login);
+            }else if(tokenexist.errno!=null){
+              res.status(failure.server_error.code).json(failure.server_error);
+            }else{
+              const decoded = jwt.verify(token, process.env.SCREETKEY);
+              req.id=decoded.id;
+              req.username=decoded.username;
             next();
+            }
           } catch (error) {
-            res.json(failure.wrong_token);
+            res.status(failure.wrong_token.code).json(failure.wrong_token);
           }
     }else {
         res.json(failure.you_must_be_login);
@@ -27,10 +35,10 @@ const authForPassword = (req,res,next) => {
             req.username=decoded.username;
             next();
           } catch (error) {
-            res.json(failure.wrong_token);
+            res.status(failure.wrong_token.code).json(failure.wrong_token);
           }
     }else {
-        res.json(failure.you_must_be_login);
+        res.status(failure.you_must_be_login.code).json(failure.you_must_be_login);
     }
     
 }

@@ -3,9 +3,6 @@ const loginRouter = express.Router();
 const login = require('../controllers/login');
 const forgotPassword = require('../controllers/newPassword');
 
-loginRouter.get('/',async (req,res)=>{
-
-});
 loginRouter.post('/',async (req,res)=>{
     const result = await login(req);
     res.status(result.code).json(result);

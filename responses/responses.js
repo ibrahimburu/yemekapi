@@ -212,6 +212,11 @@ const successfuly = {
         "code":200,
         "message":"hompage_showed",
         "status":true
+    },
+    discovred_showed:{
+        "code":200,
+        "message":"hompage_showed",
+        "status":true
     }
 }
 

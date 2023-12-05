@@ -6,8 +6,24 @@ const { v1: uuidv1 } = require('uuid');
 
 const register = async (req,res) =>{
     return new Promise (async(resolve)=>{
-        const sql = 'select * from users ';
-        resolve(await dbhelper(sql));
+        const sql1 = `SELECT * FROM posts `;
+        const sql2 = `SELECT * FROM users `;
+        try {
+            const posts = await dbhelper(sql1);
+            const result = {
+                posts:posts,
+                message:successfuly.post_adedd.message,
+                code:successfuly.post_adedd.code
+            }
+            const users = await dbhelper(sql2);
+            resolve(result);
+        } catch (error) {
+            console.log(error)
+            resolve( failure.account_not_found)
+            return
+        }
+        console.log("devammm")
+        
     })       
 }
 const create_newUser = async (req,res) =>{

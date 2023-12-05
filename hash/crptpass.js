@@ -15,7 +15,6 @@ function decrypt (hashpassword){
     try {
         const bytes = CryptoJS.AES.decrypt(hashpassword,process.env.SCREETKEY).toString();
         return originalText = bytes;
-        //return "dsfdsfsdf"
     } catch (error) {
         return error;
     }

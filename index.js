@@ -10,6 +10,9 @@ const postRouter = require('./routes/postRouter');
 const useroperationsRouter = require('./routes/useroperationsRouter');
 const imageRouter = require('./routes/imageRouter');
 const hompageRouter = require('./routes/hompageRouter');
+const discovredRouter = require('./routes/discovredRouter');
+const postdetailsRouter = require('./routes/postdetailsRouter');
+
 const path = require('path');
 
 dotenv.config();
@@ -20,7 +23,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req,res) =>{
-    res.json({message:"hesllo"})
+    res.json({message:"hello"})
 })
 app.use('/api/register',registerRouter);
 app.use('/api/login',loginRouter);
@@ -28,9 +31,11 @@ app.use('/api/verify',verifyRouter);
 app.use('/api/password',passwordRouter);
 app.use('/api/post',postRouter);
 app.use('/api/useroperations',useroperationsRouter);
-app.use('/api/hompage',hompageRouter);
+app.use('/api/homepage',hompageRouter);
+app.use('/api/discovred',discovredRouter);
 app.use('/api/images',imageRouter);
 app.use('/api/getimage',imageRouter);
+app.use('/api/postdetails',postdetailsRouter);
 
 const PORT = process.env.PORT || 8088;
 

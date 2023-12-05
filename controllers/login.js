@@ -8,7 +8,6 @@ const login = async(req,res)=>{
             const userName = req.body.username;
             const sqlForToken = `INSERT INTO token SET ?`;
             const isUser = await dbhelper(sqlForUserName, userName);
-            console.log(isUser)
             if((isUser[0]?.username==undefined)){
                 resolve(failure.user_name_is_not_exist);
             }else if(isUser[0]?.status==0){

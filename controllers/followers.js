@@ -175,12 +175,14 @@ const addcoment = async (req, res) => {
 };
 const addavatar = async (req, res) => {
     return new Promise(async (resolve) => {
+        
         upload(req, res, async function (err) {
             if (err) {
                 resolve(failure.avatar_not_added);
             } else {
                 const sqlForUpdate = 'UPDATE users SET photo = ? where id = ?';
-                const image = req?.file.filename;
+                const image = req?.file?.filename;
+                image == undefined ? resolve(failure.server_error):null;
                 const id = req.id;
                 const updatevalues = [image,id]
                 const addimage = await dbhelper(sqlForUpdate, updatevalues);
