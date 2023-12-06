@@ -1,5 +1,6 @@
 const {createPool} = require('mysql');
 const dotenv = require('dotenv');
+const { query } = require('express');
 
 dotenv.config();
 const pool =  createPool({

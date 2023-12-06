@@ -5,45 +5,6 @@ dotenv.config();
 const requesthompage = async(req,res)=>{
     return new Promise(async(resolve)=>{
         const url = process.env.IMAGEURL;
-    //     const sql = `SELECT
-    //     p.id AS post_id,
-    //     p.title AS post_title,
-    //     p.body AS post_body,
-    //     m.title AS material_title,
-    //     m.amount AS material_amount,
-    //     GROUP_CONCAT(pi.source) AS post_images,
-    //     IFNULL(SUM(lc.like_count), 0) AS like_count,
-    //     IFNULL(SUM(cc.comment_count), 0) AS comment_count,
-    //     u.username AS user_name,
-    //     u.photo AS user_avatar
-    // FROM
-    //     posts p
-    //     JOIN users u ON p.user_id = u.id
-    //     LEFT JOIN material m ON m.post_id = p.id
-    //     LEFT JOIN posts_image pi ON pi.post_id = p.id
-    //     LEFT JOIN (
-    //         SELECT post_id, COUNT(id) AS like_count
-    //         FROM likes
-    //         GROUP BY post_id
-    //     ) AS lc ON lc.post_id = p.id
-    //     LEFT JOIN (
-    //         SELECT post_id, COUNT(id) AS comment_count
-    //         FROM comments
-    //         GROUP BY post_id
-    //     ) AS cc ON cc.post_id = p.id
-    // WHERE
-    //     p.user_id IN (
-    //         SELECT user_id
-    //         FROM followers
-    //         WHERE follower_id = ?
-    //     )
-    //     AND p.status = 1
-    // GROUP BY
-    //     p.id, p.title, p.body, m.title, m.amount, u.username, u.photo
-    // ORDER BY
-    //     p.created_at DESC
-    // LIMIT 20 OFFSET ?
-    //  `;
         const sqlForPosts = `SELECT * FROM posts WHERE user_id in (SELECT user_id FROM followers where follower_id = ?) AND status = true ORDER BY created_at DESC LIMIT 20 OFFSET ?`;
         const sqlForPhoto = `SELECT * FROM posts_image WHERE post_id = ?`;
         const sqlForMaterial = `SELECT * FROM material WHERE post_id = ?`;
@@ -61,15 +22,10 @@ const requesthompage = async(req,res)=>{
             return
         }else{
             let i;
-            let j;
-            let result=[];
+            result = [];
             for(i=0;i<posts.length;i++){
                 const photo = await dbhelper(sqlForPhoto,posts[i]?.id);
-                const photosource = photo.map(({source}) => source);
-                let urll =[];
-                for(j=0;j<photosource.length;j++){
-                     urll[j] = `${url}${photosource[j]}`
-                }
+                const photosource = photo.map(({source}) => url+source);
                 const material = await dbhelper(sqlForMaterial,posts[i]?.id);
                 const materialtitle = material.map(({title})=>title);
                 const likecount = await dbhelper(sqlForLikeCount,posts[i]?.id);
@@ -80,7 +36,7 @@ const requesthompage = async(req,res)=>{
                     post_title:posts[i]?.title,
                     post_body:posts[i]?.body,
                     post_created_at:posts[i]?.created_at,
-                    post_images:urll,
+                    post_images:photosource,
                     post_material:materialtitle,
                     like_count:likecount[0].liked,
                     comment_count:commentCount[0].comment,

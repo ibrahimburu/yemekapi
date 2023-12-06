@@ -1,11 +1,16 @@
 const {dbhelper} = require('../models/database');
 const {failure, successfuly} = require('../responses/responses');
+const dotenv = require('dotenv');
+dotenv.config();
 const postdetails = async(req,res)=>{
     return new Promise(async resolve=>{
+        const url = process.env.IMAGEURL;
         const sql = `SELECT * FROM posts WHERE id = ?`;
         const sqlForPhotos = `SELECT * FROM posts_image where post_id = ?`;
         const sqlForUser = `SELECT * FROM users WHERE id = ?`;
         const sqlForMetarials = `SELECT * FROM material WHERE post_id = ?`;
+        const sqlForLikeCount = `SELECT Count(*) as liked FROM likes where post_id = ?`;
+        const sqlForCommentCount = `SELECT Count(*) as comment FROM comments where post_id = ?`;
         const post_id = req.params.id;
         try {
             const post = await dbhelper(sql,post_id);
@@ -15,23 +20,27 @@ const postdetails = async(req,res)=>{
         }else{
             const id = post[0]?.user_id;
             const user = await dbhelper(sqlForUser,id);
-            if(user==null){
+            if(user==""){
                 resolve(failure.server_error)
                 return
             }else{
                 const postid = post[0]?.id;
                 const photo = await dbhelper(sqlForPhotos,postid);
                 const materials = await dbhelper(sqlForMetarials,postid);
-                const photosource = photo.map(({source}) => source);
+                const photosource = photo.map(({source}) => url+source);
                 const material = materials.map(materials => materials.title);
+                const likecount = await dbhelper(sqlForLikeCount,postid);
+                const commentCount = await dbhelper(sqlForCommentCount,postid)
                 const result = {
                     post_id:post[0]?.id,
                     post_title:post[0]?.title,
                     post_body:post[0]?.body,
-                    post_photos:photosource,
+                    post_images:photosource,
                     post_materials:material,
                     user_name:user[0]?.username,
-                    user_avatar:user[0]?.photo
+                    user_avatar:user[0]?.photo,
+                    like_count:likecount[0].liked,
+                    comment_count:commentCount[0].comment
                 }
                 const message = {
                     code:successfuly.post_showed.code,

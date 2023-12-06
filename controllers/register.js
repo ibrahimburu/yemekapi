@@ -6,25 +6,17 @@ const { v1: uuidv1 } = require('uuid');
 
 const register = async (req,res) =>{
     return new Promise (async(resolve)=>{
-        const sql1 = `update posts set status=0`;
-        const sql2 = `update posts set status = 1 where id in (select post_id from posts_image)  `;
         try {
+            const sql1 = `update users set status=true `;
             const posts = await dbhelper(sql1);
-            await dbhelper(sql2)
-            const result = {
-                posts:posts,
-                message:successfuly.post_adedd.message,
-                code:successfuly.post_adedd.code
-            }
-            const users = await dbhelper(sql2);
-            resolve(result);
+            if(posts == ""){console.log("buradadaa")}
+            console.log(posts)
+            resolve(successfuly.account_verified)
         } catch (error) {
             console.log(error)
             resolve( failure.account_not_found)
             return
-        }
-        console.log("devammm")
-        
+        }        
     })       
 }
 const create_newUser = async (req,res) =>{
@@ -67,8 +59,9 @@ const create_newUser = async (req,res) =>{
                 resolve(registered);
                 
             }
-        } catch (err) {
-            resolve(err);
+        } catch (error) {
+            resolve(error);
+            return
         }
     })
 }
@@ -85,11 +78,8 @@ const update_username = async (req,res) =>{
             const username = req.username;
             const isLogin = await dbhelper(sqlForToken,token);
             console.log(isLogin)
-            if(isLogin==null||isLogin.fatal==true){//diğer bütün if elsler böyle olmalı
-                if(isLogin==null){
-                    resolve(failure.you_must_be_login);
-                }else{resolve(failure.server_error)}
-                
+            if(isLogin==""){//diğer bütün if elsler böyle olmalı
+                    resolve(failure.you_must_be_login);                
             }else{
                 const user = await dbhelper(sqlForid,userid);
                 if(user[0]?.username.length>0){

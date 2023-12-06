@@ -19,7 +19,7 @@ useroperationsRouter.post('/search',auth,async(req,res)=>{
     const result = await search(req);
     res.status(result.code).json(result);
 })
-useroperationsRouter.post('/followerequest',auth,async(req,res)=>{
+useroperationsRouter.post('/showfollowerequest',auth,async(req,res)=>{
     const result = await followerrequest(req);
     res.status(result.code).json(result);
 })

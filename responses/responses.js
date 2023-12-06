@@ -113,6 +113,11 @@ const failure = {
         "code":400,
         "message":"there_is_nothing_to_show",
         "status":false
+    },
+    follow_request_already_sended:{
+        "code":400,
+        "message":"follow_request_already_sended",
+        "status":false
     }
     
         

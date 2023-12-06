@@ -19,7 +19,7 @@ const auth = async(req,res,next) => {
             next();
             }
           } catch (error) {
-            res.status(failure.wrong_token.code).json(failure.wrong_token);
+            res.status(failure.server_error.code).json(failure.server_error);
           }
     }else {
         res.json(failure.you_must_be_login);

@@ -1,7 +1,10 @@
 const {dbhelper} = require('../models/database');
 const { failure, successfuly } = require('../responses/responses');
+const dotenv = require('dotenv');
+dotenv.config();
 const requestdiscovred = async(req,res)=>{
     return new Promise(async(resolve)=>{
+        const url = process.env.IMAGEURL;
         const sql = `SELECT 
         p.id AS post_id,
         p.title AS post_title,
@@ -15,22 +18,32 @@ const requestdiscovred = async(req,res)=>{
     ORDER BY p.created_at DESC
     LIMIT 20 OFFSET ?  
     `;
+        const sqlForPhoto = `SELECT * FROM posts_image WHERE post_id = ?`;
         const userid = req.id;
         let offset = req.query.offset*20;
         offset==null ? offset = 0:offset=parseInt(offset);
-        console.log(offset)
         const posts = await dbhelper(sql,[userid,offset]);
-        console.log(posts)
         if(posts==null){
             resolve(failure.there_is_nothing_to_show);
-        }else if(posts.errno!=null){
-            resolve(failure.server_error)
         }else{
+            let postarray = [];
+            let i;
+            for(i=0;i<posts.length;i++){
+                const photos = await dbhelper(sqlForPhoto,posts[i]?.post_id);
+                const photosource = photos.map(({source})=>url+source)
+                postarray.push({
+                    post_id: posts[i]?.post_id,
+                    post_title: posts[i]?.post_title,
+                    post_body: posts[i]?.post_body,
+                    post_created_at: posts[i]?.post_created_at,
+                    post_photo:photosource
+                })
+            }
             const message = {
                 code:successfuly.discovred_showed.code,
                 message:successfuly.discovred_showed.message,
                 status:successfuly.discovred_showed.status,
-                result:posts
+                result:postarray
             }
             resolve(message);
         }
