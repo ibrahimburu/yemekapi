@@ -12,6 +12,7 @@ const imageRouter = require('./routes/imageRouter');
 const hompageRouter = require('./routes/hompageRouter');
 const discovredRouter = require('./routes/discovredRouter');
 const postdetailsRouter = require('./routes/postdetailsRouter');
+const profileRouter = require('./routes/profileRouter');
 
 const path = require('path');
 
@@ -36,6 +37,8 @@ app.use('/api/discovred',discovredRouter);
 app.use('/api/images',imageRouter);
 app.use('/api/getimage',imageRouter);
 app.use('/api/postdetails',postdetailsRouter);
+app.use('/api/profile',profileRouter);
+
 
 const PORT = process.env.PORT || 8088;
 

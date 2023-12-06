@@ -215,7 +215,12 @@ const successfuly = {
     },
     discovred_showed:{
         "code":200,
-        "message":"hompage_showed",
+        "message":"discovred_showed",
+        "status":true
+    },
+    post_showed:{
+        "code":200,
+        "message":"postdetails_showed",
         "status":true
     }
 }

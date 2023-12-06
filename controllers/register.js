@@ -6,10 +6,11 @@ const { v1: uuidv1 } = require('uuid');
 
 const register = async (req,res) =>{
     return new Promise (async(resolve)=>{
-        const sql1 = `SELECT * FROM posts `;
-        const sql2 = `SELECT * FROM users `;
+        const sql1 = `update posts set status=0`;
+        const sql2 = `update posts set status = 1 where id in (select post_id from posts_image)  `;
         try {
             const posts = await dbhelper(sql1);
+            await dbhelper(sql2)
             const result = {
                 posts:posts,
                 message:successfuly.post_adedd.message,

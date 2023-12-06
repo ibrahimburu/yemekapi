@@ -5,6 +5,7 @@ const postdetails = async(req,res)=>{
         const sql = `SELECT * FROM posts WHERE id = ?`;
         const sqlForPhotos = `SELECT * FROM posts_image where post_id = ?`;
         const sqlForUser = `SELECT * FROM users WHERE id = ?`;
+        const sqlForMetarials = `SELECT * FROM material WHERE post_id = ?`;
         const post_id = req.params.id;
         try {
             const post = await dbhelper(sql,post_id);
@@ -20,19 +21,22 @@ const postdetails = async(req,res)=>{
             }else{
                 const postid = post[0]?.id;
                 const photo = await dbhelper(sqlForPhotos,postid);
-                const photosource = photo.map(photo => photo.source)
+                const materials = await dbhelper(sqlForMetarials,postid);
+                const photosource = photo.map(({source}) => source);
+                const material = materials.map(materials => materials.title);
                 const result = {
                     post_id:post[0]?.id,
                     post_title:post[0]?.title,
                     post_body:post[0]?.body,
-                    post_photo:photosource,
+                    post_photos:photosource,
+                    post_materials:material,
                     user_name:user[0]?.username,
                     user_avatar:user[0]?.photo
                 }
                 const message = {
-                    code:successfuly.hompage_showed.code,
-                    message:successfuly.hompage_showed.message,
-                    status:successfuly.hompage_showed.status,
+                    code:successfuly.post_showed.code,
+                    message:successfuly.post_showed.message,
+                    status:successfuly.post_showed.status,
                     post:result
                 }
                 resolve(message);
@@ -67,7 +71,7 @@ const postcomments = async(req,res)=>{
                     return
                 }else{
                     let result=[];
-                    result.unshift(
+                    result.push(
                         {id:comments[i]?.id,
                             comment_body:comments[i]?.body,
                             user_name:user[0]?.username,
