@@ -10,7 +10,6 @@ const addpost = async (req, res) => {
                     resolve(failure.server_error);
                     return
                 } else {
-                    console.log(req.body?.title)
                     const post = {
                         id: uuidv1(),
                         title: req.body.title,
