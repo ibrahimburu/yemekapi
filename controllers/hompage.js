@@ -9,6 +9,7 @@ const requesthompage = async(req,res)=>{
         const sqlForPhoto = `SELECT * FROM posts_image WHERE post_id = ?`;
         const sqlForMaterial = `SELECT * FROM material WHERE post_id = ?`;
         const sqlForLikeCount = `SELECT Count(*) as liked FROM likes where post_id = ?`;
+        const sqlForLike = `SELECT * FROM likes where user_id = ? AND post_id = ?`;
         const sqlForCommentCount = `SELECT Count(*) as comment FROM comments where post_id = ?`;
         const sqlForUsers = `SELECT * FROM users where id = ?`;
         const followerid = req.id;
@@ -21,6 +22,7 @@ const requesthompage = async(req,res)=>{
             resolve(failure.there_is_nothing_to_show);
             return
         }else{
+            let already_liked = false;
             let i;
             result = [];
             for(i=0;i<posts.length;i++){
@@ -31,6 +33,10 @@ const requesthompage = async(req,res)=>{
                 const likecount = await dbhelper(sqlForLikeCount,posts[i]?.id);
                 const commentCount = await dbhelper(sqlForCommentCount,posts[i]?.id);
                 const user = await dbhelper(sqlForUsers,posts[i]?.user_id);
+                const alreadyLiked = await dbhelper(sqlForLike,[req?.id,posts[i]?.id]);
+                if(alreadyLiked!=""){
+                    already_liked = true;
+                }
                 result.push({
                     post_id:posts[i]?.id,
                     post_title:posts[i]?.title,
@@ -41,7 +47,8 @@ const requesthompage = async(req,res)=>{
                     like_count:likecount[0].liked,
                     comment_count:commentCount[0].comment,
                     user_name:user[0]?.username,
-                    user_avatar:user[0]?.photo
+                    user_avatar:user[0]?.photo,
+                    liked_by_user:already_liked
                 })
             }
             

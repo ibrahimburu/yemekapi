@@ -10,6 +10,7 @@ const postdetails = async(req,res)=>{
         const sqlForUser = `SELECT * FROM users WHERE id = ?`;
         const sqlForMetarials = `SELECT * FROM material WHERE post_id = ?`;
         const sqlForLikeCount = `SELECT Count(*) as liked FROM likes where post_id = ?`;
+        const sqlForLike = `SELECT * FROM likes where user_id = ? AND post_id = ?`;
         const sqlForCommentCount = `SELECT Count(*) as comment FROM comments where post_id = ?`;
         const post_id = req.params.id;
         try {
@@ -24,6 +25,7 @@ const postdetails = async(req,res)=>{
                 resolve(failure.server_error)
                 return
             }else{
+                let already_liked = false;
                 const postid = post[0]?.id;
                 const photo = await dbhelper(sqlForPhotos,postid);
                 const materials = await dbhelper(sqlForMetarials,postid);
@@ -31,16 +33,22 @@ const postdetails = async(req,res)=>{
                 const material = materials.map(materials => materials.title);
                 const likecount = await dbhelper(sqlForLikeCount,postid);
                 const commentCount = await dbhelper(sqlForCommentCount,postid)
+                const alreadyLiked = await dbhelper(sqlForLike,[req?.id,post[0]?.id]);
+                if(alreadyLiked!=""){
+                    already_liked = true;
+                }
                 const result = {
                     post_id:post[0]?.id,
                     post_title:post[0]?.title,
                     post_body:post[0]?.body,
                     post_images:photosource,
                     post_materials:material,
+                    post_created_at:post[0]?.created_at,
                     user_name:user[0]?.username,
                     user_avatar:user[0]?.photo,
                     like_count:likecount[0].liked,
-                    comment_count:commentCount[0].comment
+                    comment_count:commentCount[0].comment,
+                    liked_by_user:already_liked
                 }
                 const message = {
                     code:successfuly.post_showed.code,

@@ -24,15 +24,15 @@ const addpost = async (req, res) => {
                     }
 
                     const sqlForpsot = `INSERT INTO posts SET ?`;
-                    const result = await dbhelper(sqlForpsot, post);
+                    const result = await dbhelper(sqlForpsot, post).then().catch(error=>{resolve(failure.server_error);return});
                     if (result == "") {
                         resolve(failure.server_error);
                     } else {
                         addpostimage(req, res, post.id, (err) => {
-                            resolve(err);
+                            resolve(failure.server_error);
                         });//post eklendikten sonra fotoğraf eklenmezse postu geri sil
                         addpostmaterial(req, res, post.id, (err) => {
-                            resolve(err);
+                            resolve(failure.server_error);
                         })
                         resolve(successfuly.post_adedd);
                         return

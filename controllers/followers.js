@@ -32,6 +32,12 @@ const follow = async (req, res) => {
                             return
                         }
                         resolve(successfuly.follow_request_sended);
+                        const notification = {
+                            target: result[0]?.id,
+                            source: req.id,
+                            type: "follow request accepted"
+                        }
+                        notifications(notification);
                         return
                     } else {
                         resolve(failure.follow_request_already_sended);
@@ -92,6 +98,12 @@ const acceptfollowrequest = async (req, res) => {
                 return
             } else {
                 resolve(successfuly.follow_request_accepted);
+                const notification = {
+                    target: followerid[0].id,
+                    source: req.id,
+                    type: "follow request accepted"
+                }
+                notifications(notification);
                 return
             }
         } catch (error) {
@@ -154,29 +166,42 @@ const search = async (req, res) => {
 const liked = async (req, res) => {
     return new Promise(async (resolve) => {
         try {
-            const sql = 'INSERT INTO  likes SET ?';
+            const sql = 'INSERT INTO likes SET ?';
             const sqlForPostid = 'SELECT * FROM posts where id = ?';
+            const sqlForLike = `SELECT * FROM likes where user_id = ? AND post_id = ?`;
+            const sqlForDeleteLike = `DELETE FROM likes where user_id = ? AND post_id = ?`;
             const postid = req.body.post_id;
-            const newlike = {
-                id: uuidv1(),
-                user_id: req.id,
-                post_id: postid,
-            };
-            const postavailable = await dbhelper(sqlForPostid, postid);
-            if (postavailable == "") {
-                resolve(failure.post_not_found);
-            } else {
-                const like = await dbhelper(sql, newlike);
-                if (like == "") {
+            const alreadyLiked = await dbhelper(sqlForLike, [req.id, postid]);
+            if (alreadyLiked != ""|null|undefined) {
+                const deleteLike = await dbhelper(sqlForDeleteLike,[req.id,postid]);
+                if(deleteLike == ""){
                     resolve(failure.server_error);
+                    return
+                }else{
+                    resolve(successfuly.unliked);
+                }
+            } else {
+                const newlike = {
+                    id: uuidv1(),
+                    user_id: req.id,
+                    post_id: postid,
+                };
+                const postavailable = await dbhelper(sqlForPostid, postid);
+                if (postavailable == "") {
+                    resolve(failure.post_not_found);
                 } else {
-                    resolve(successfuly.like_added);
-                    const notification = {
-                        target: postavailable[0]?.user_id,
-                        source: req.id,
-                        type: like,//bu ayarlanacak
+                    const like = await dbhelper(sql, newlike);
+                    if (like == "") {
+                        resolve(failure.server_error);
+                    } else {
+                        resolve(successfuly.like_added);
+                        const notification = {
+                            target: postavailable[0]?.user_id,
+                            source: req?.id,
+                            type: "like"
+                        }
+                        notifications(notification);
                     }
-                    notifications(notification);
                 }
             }
         } catch (error) {
@@ -211,7 +236,7 @@ const addcoment = async (req, res) => {
                     const notification = {
                         target: postavailable[0]?.user_id,
                         source: req.id,
-                        type: comment,//bu ayarlanacak
+                        type: "comment",//bu ayarlanacak
                     }
                     notifications(notification);
                     return

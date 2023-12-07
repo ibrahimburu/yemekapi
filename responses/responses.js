@@ -178,6 +178,11 @@ const successfuly = {
         "message":"like_added",
         "status":true
     },
+    unliked:{
+        "code":200,
+        "message":"unlike",
+        "status":true
+    },
     comment_added:{
         "code":200,
         "message":"comment_added",

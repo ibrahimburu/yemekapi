@@ -10,7 +10,7 @@ const postRouter = require('./routes/postRouter');
 const useroperationsRouter = require('./routes/useroperationsRouter');
 const imageRouter = require('./routes/imageRouter');
 const hompageRouter = require('./routes/hompageRouter');
-const discovredRouter = require('./routes/discovredRouter');
+const discoverRouter = require('./routes/discoverRouter');
 const postdetailsRouter = require('./routes/postdetailsRouter');
 const profileRouter = require('./routes/profileRouter');
 
@@ -33,7 +33,7 @@ app.use('/api/password',passwordRouter);
 app.use('/api/post',postRouter);
 app.use('/api/useroperations',useroperationsRouter);
 app.use('/api/homepage',hompageRouter);
-app.use('/api/discovred',discovredRouter);
+app.use('/api/discover',discoverRouter);
 app.use('/api/images',imageRouter);
 app.use('/api/getimage',imageRouter);
 app.use('/api/postdetails',postdetailsRouter);

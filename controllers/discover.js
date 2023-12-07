@@ -4,9 +4,11 @@ const dotenv = require('dotenv');
 dotenv.config();
 const requestdiscovred = async(req,res)=>{
     return new Promise(async(resolve)=>{
-        const url = process.env.IMAGEURL;
+        try {
+            const url = process.env.IMAGEURL;
         const sql = `SELECT 
         p.id AS post_id,
+        p.status AS status,
         p.title AS post_title,
         p.body AS post_body,
         p.created_at AS post_created_at,
@@ -14,7 +16,7 @@ const requestdiscovred = async(req,res)=>{
         u.photo AS user_photo
     FROM posts p
     JOIN users u ON p.user_id = u.id
-    WHERE p.user_id != ?
+    WHERE p.user_id != ? AND p.status = true
     ORDER BY p.created_at DESC
     LIMIT 20 OFFSET ?  
     `;
@@ -23,7 +25,7 @@ const requestdiscovred = async(req,res)=>{
         let offset = req.query.offset*20;
         offset==null ? offset = 0:offset=parseInt(offset);
         const posts = await dbhelper(sql,[userid,offset]);
-        if(posts==null){
+        if(posts==""){
             resolve(failure.there_is_nothing_to_show);
         }else{
             let postarray = [];
@@ -36,18 +38,22 @@ const requestdiscovred = async(req,res)=>{
                     post_title: posts[i]?.post_title,
                     post_body: posts[i]?.post_body,
                     post_created_at: posts[i]?.post_created_at,
-                    post_photo:photosource
+                    post_images:photosource
                 })
             }
             const message = {
                 code:successfuly.discovred_showed.code,
                 message:successfuly.discovred_showed.message,
                 status:successfuly.discovred_showed.status,
-                result:postarray
+                posts:postarray
             }
             resolve(message);
         }
 
+        } catch (error) {
+            resolve(failure.server_error);
+            return
+        }
 
     })
 }
