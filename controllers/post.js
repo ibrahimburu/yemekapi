@@ -72,7 +72,6 @@ const addpostmaterial = async (req, res, id) => {
                 const material = {
                     id: uuidv1(),
                     title: req.body?.materials[i],
-                    // amount:req.body?.materials[i].amount,
                     post_id: id
                 }
                 await dbhelper(sqlForMaterial, material);

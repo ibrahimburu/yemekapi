@@ -13,6 +13,7 @@ const hompageRouter = require('./routes/hompageRouter');
 const discoverRouter = require('./routes/discoverRouter');
 const postdetailsRouter = require('./routes/postdetailsRouter');
 const profileRouter = require('./routes/profileRouter');
+const commentRouter = require('./routes/commentRouter');
 
 const path = require('path');
 
@@ -37,6 +38,7 @@ app.use('/api/discover',discoverRouter);
 app.use('/api/images',imageRouter);
 app.use('/api/getimage',imageRouter);
 app.use('/api/postdetails',postdetailsRouter);
+app.use('/api/comments',commentRouter);
 app.use('/api/profile',profileRouter);
 
 

@@ -1,6 +1,6 @@
 const { v1: uuidv1 } = require('uuid');
 const { dbhelper } = require('../models/database');
-const { failure, uccessfuly, successfuly } = require('../responses/responses');
+const { failure, successfuly } = require('../responses/responses');
 const notifications = async (notification) => {
     return new Promise(async (resolve) => {
         try {

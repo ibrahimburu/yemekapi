@@ -113,6 +113,52 @@ const acceptfollowrequest = async (req, res) => {
 
     })
 };
+const followers = async (req, res) => {
+    return new Promise(async (resolve) => {
+        try {
+            const sqlForFollowers = `SELECT username,photo FROM users WHERE id IN (SELECT follower_id FROM followers WHERE user_id = ?)`;
+            const followers = await dbhelper(sqlForFollowers,req.id);
+            if(followers==""){
+                resolve(failure.there_is_nothing_to_show)
+            }else{
+                const response = {
+                    message:successfuly.followers_showed.message,
+                    code:successfuly.followers_showed.code,
+                    status:successfuly.followers_showed.status,
+                    users:followers
+                }
+                resolve(response);
+            }
+            
+        } catch (error) {
+            console.log(error)
+            resolve(failure.server_error);
+        }
+    })
+}
+const followed = async (req, res) => {
+    return new Promise(async (resolve) => {
+        try {
+            const sqlForFollowers = `SELECT username,photo FROM users WHERE id IN (SELECT user_id FROM followers WHERE follower_id = ?)`;
+            const followed = await dbhelper(sqlForFollowers,req.id);
+            if(followed==""){
+                resolve(failure.there_is_nothing_to_show)
+            }else{
+                const response = {
+                    message:successfuly.followed_showed.message,
+                    code:successfuly.followed_showed.code,
+                    status:successfuly.followed_showed.status,
+                    users:followed
+                }
+                resolve(response);
+            }
+            
+        } catch (error) {
+            console.log(error)
+            resolve(failure.server_error);
+        }
+    })
+}
 const deletefollowrequest = async (req, res) => {//bu yapılacak
     return new Promise(async (resolve) => {
         try {
@@ -172,12 +218,12 @@ const liked = async (req, res) => {
             const sqlForDeleteLike = `DELETE FROM likes where user_id = ? AND post_id = ?`;
             const postid = req.body.post_id;
             const alreadyLiked = await dbhelper(sqlForLike, [req.id, postid]);
-            if (alreadyLiked != ""|null|undefined) {
-                const deleteLike = await dbhelper(sqlForDeleteLike,[req.id,postid]);
-                if(deleteLike == ""){
+            if (alreadyLiked != "" | null | undefined) {
+                const deleteLike = await dbhelper(sqlForDeleteLike, [req.id, postid]);
+                if (deleteLike == "") {
                     resolve(failure.server_error);
                     return
-                }else{
+                } else {
                     resolve(successfuly.unliked);
                 }
             } else {
@@ -276,4 +322,4 @@ const addavatar = async (req, res) => {
 
     })
 };
-module.exports = { follow, search, followerrequest, liked, addcoment, addavatar, deletefollowrequest, acceptfollowrequest };
+module.exports = { follow, search, followerrequest, liked, addcoment, addavatar, deletefollowrequest, acceptfollowrequest, followers, followed };

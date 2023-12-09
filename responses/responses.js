@@ -118,6 +118,11 @@ const failure = {
         "code":400,
         "message":"follow_request_already_sended",
         "status":false
+    },
+    wrong_email:{
+        "code":400,
+        "message":"wrong_email",
+        "status":false
     }
     
         
@@ -191,6 +196,16 @@ const successfuly = {
     follow_request_sended:{
         "code":200,
         "message":"follow_request_sended",
+        "status":true
+    },
+    followers_showed:{
+        "code":200,
+        "message":"followers_showed",
+        "status":true
+    },
+    followed_showed:{
+        "code":200,
+        "message":"followed_showed",
         "status":true
     },
     follow_request_accepted:{

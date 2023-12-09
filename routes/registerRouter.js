@@ -2,7 +2,7 @@ const express = require('express');
 const registerRouter = express.Router();
 const {register, create_newUser, update_username} = require('../controllers/register');
 const {auth} = require('../middlewares/authMiddlewares');
-registerRouter.get('/', async (req,res)=>{
+registerRouter.post('/r', async (req,res)=>{
     const result = await register(req,res);
       res.status(result.code).json(result);
 });
