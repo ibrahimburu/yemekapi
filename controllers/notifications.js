@@ -28,4 +28,38 @@ const notifications = async (notification) => {
 
     })
 }
-module.exports = notifications;
+const showNotifications = async (req,res)=>{
+    return new Promise(async(resolve) => {
+        const sqlForNotification = `SELECT * FROM notifications WHERE target = ?`;
+        const sqForUpdateNotification = `UPDATE notifications SET status = true WHERE id = ?`;
+        const sqlForUser = `SELECT username,photo FROM users WHERE id = ?`;
+        const notification = await dbhelper(sqlForNotification,req.id);
+        if(notification == ""){
+            resolve(successfuly.there_is_nothing_to_show);
+            return
+        }
+        let i;
+        let response = [];
+        for(i=0;i<notification.length;i++){
+            const source = await dbhelper(sqlForUser,notification[i]?.source);
+            response.push({
+                type:notification[i].type,
+                user_name:source[0].username,
+                user_avatar:source[0].photo,
+                body:notification[i].body,
+                status:notification[i].status
+            })
+            if(notification[i].status==false){
+                await dbhelper(sqForUpdateNotification,notification[i].id)
+            }
+        }
+        let result={
+            message:successfuly.Notifications_showed.message,
+            code:successfuly.Notifications_showed.code,
+            status:successfuly.Notifications_showed.status,
+            notifications:response
+        }
+        resolve(result)
+    })
+}
+module.exports = {notifications, showNotifications};

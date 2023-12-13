@@ -14,11 +14,12 @@ const discoverRouter = require('./routes/discoverRouter');
 const postdetailsRouter = require('./routes/postdetailsRouter');
 const profileRouter = require('./routes/profileRouter');
 const commentRouter = require('./routes/commentRouter');
+const notificationsRouter = require('./routes/notificationsRouter');
 
 const path = require('path');
 
 dotenv.config();
-
+//syfalama yapılacak
 
 const app = express();
 app.use(cors());
@@ -40,6 +41,8 @@ app.use('/api/getimage',imageRouter);
 app.use('/api/postdetails',postdetailsRouter);
 app.use('/api/comments',commentRouter);
 app.use('/api/profile',profileRouter);
+app.use('/api/notifications',notificationsRouter);
+
 
 
 const PORT = process.env.PORT || 8088;

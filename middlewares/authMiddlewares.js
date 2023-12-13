@@ -10,8 +10,6 @@ const auth = async(req,res,next) => {
             const tokenexist =await dbhelper(sqlFortoken,token);
             if(tokenexist==''){
               res.status(failure.you_must_be_login.code).json(failure.you_must_be_login);
-            }else if(tokenexist.errno!=null){
-              res.status(failure.server_error.code).json(failure.server_error);
             }else{
               const decoded = jwt.verify(token, process.env.SCREETKEY);
               req.id=decoded.id;

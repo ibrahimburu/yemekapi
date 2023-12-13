@@ -14,6 +14,7 @@ const dbhelper = (sql,parametre) =>{
     return new Promise((resolve, reject)=>{
         pool.query(sql, parametre, (err, result, fields)=>{
             if(err){
+                console.log(err)
                 reject(new Error(err.message));
             }
                 resolve(result);

@@ -5,13 +5,13 @@ dotenv.config();
 const myProfile = async (req, res) => {
     return new Promise(async resolve => {
         const url = process.env.IMAGEURL;
-        const sqlForPosts = `SELECT * FROM posts WHERE user_id = ? AND status = true`;
+        const sqlForPosts = `SELECT * FROM posts WHERE user_id = ? AND status = true ORDER BY created_at DESC`;
         const sqlForPhotos = `SELECT * FROM posts_image where post_id = ?`;
         const sqlForUser = `SELECT * FROM users WHERE username = ?`;
         const sqlForFollowersCount = `SELECT Count(*) as follower FROM followers WHERE user_id = ?`;
         const sqlForFollowCount = `SELECT Count(*) as follow FROM followers WHERE follower_id = ?`;
         const sqlForUsername = `SELECT username as name FROM users WHERE id = ?`;
-        const user_name = req.params.username;
+        const user_name = req.params.username.trim().toLocaleLowerCase('tr-TR');
         try {
             const my = await dbhelper(sqlForUsername, req.id);
             if (user_name == my[0]?.name) {
@@ -91,53 +91,70 @@ const myProfile = async (req, res) => {
 
                     }
                     const followstatus = await dbhelper(sqlForFollowStatus, [req.id, user[0]?.id]);
+                    const message = {
+                        code: successfuly.post_showed.code,
+                        message: successfuly.post_showed.message,
+                        status: successfuly.post_showed.status,
+                        user_name: user[0]?.username,
+                        user_bio: user[0]?.bio,
+                        user_avatar: user[0]?.photo,
+                        followers: followersCount[0]?.follower,
+                        follow: followCount[0]?.follow,
+                        post_count: postCount,
+                        followpanding: false,
+                        followstatus: false,
+                        posts: result
+                    }
                     if (followstatus == "") {
-                        const message = {
-                            code: successfuly.post_showed.code,
-                            message: successfuly.post_showed.message,
-                            status: successfuly.post_showed.status,
-                            user_name: user[0]?.username,
-                            user_bio: user[0]?.bio,
-                            user_avatar: user[0]?.photo,
-                            followers: followersCount[0]?.follower,
-                            follow: followCount[0]?.follow,
-                            post_count: postCount,
-                            followpanding: false,
-                            followstatus: false,
-                            posts: result
-                        }
+                        // const message = {
+                        //     code: successfuly.post_showed.code,
+                        //     message: successfuly.post_showed.message,
+                        //     status: successfuly.post_showed.status,
+                        //     user_name: user[0]?.username,
+                        //     user_bio: user[0]?.bio,
+                        //     user_avatar: user[0]?.photo,
+                        //     followers: followersCount[0]?.follower,
+                        //     follow: followCount[0]?.follow,
+                        //     post_count: postCount,
+                        //     followpanding: false,
+                        //     followstatus: false,
+                        //     posts: result
+                        // }
                         resolve(message)
                     } else if (followstatus[0]?.status == true) {
-                        const message = {
-                            code: successfuly.post_showed.code,
-                            message: successfuly.post_showed.message,
-                            status: successfuly.post_showed.status,
-                            user_name: user[0]?.username,
-                            user_bio: user[0]?.bio,
-                            user_avatar: user[0]?.photo,
-                            followers: followersCount[0]?.follower,
-                            follow: followCount[0]?.follow,
-                            post_count: postCount,
-                            followstatus: true,
-                            followpanding: false,
-                            posts: result
-                        }
+                        // const message = {
+                        //     code: successfuly.post_showed.code,
+                        //     message: successfuly.post_showed.message,
+                        //     status: successfuly.post_showed.status,
+                        //     user_name: user[0]?.username,
+                        //     user_bio: user[0]?.bio,
+                        //     user_avatar: user[0]?.photo,
+                        //     followers: followersCount[0]?.follower,
+                        //     follow: followCount[0]?.follow,
+                        //     post_count: postCount,
+                        //     followstatus: true,
+                        //     followpanding: false,
+                        //     posts: result
+                        // }
+                        message.followstatus =true;
                         resolve(message);
                     } else {
-                        const message = {
-                            code: successfuly.post_showed.code,
-                            message: successfuly.post_showed.message,
-                            status: successfuly.post_showed.status,
-                            user_name: user[0]?.username,
-                            user_bio: user[0]?.bio,
-                            user_avatar: user[0]?.photo,
-                            followers: followersCount[0]?.follower,
-                            follow: followCount[0]?.follow,
-                            post_count: postCount,
-                            followstatus: true,
-                            followpanding: true,
-                            posts: result
-                        }
+                        // const message = {
+                        //     code: successfuly.post_showed.code,
+                        //     message: successfuly.post_showed.message,
+                        //     status: successfuly.post_showed.status,
+                        //     user_name: user[0]?.username,
+                        //     user_bio: user[0]?.bio,
+                        //     user_avatar: user[0]?.photo,
+                        //     followers: followersCount[0]?.follower,
+                        //     follow: followCount[0]?.follow,
+                        //     post_count: postCount,
+                        //     followstatus: true,
+                        //     followpanding: true,
+                        //     posts: result
+                        // }
+                        message.followstatus=true;
+                        message.followpanding=true;
                         resolve(message);
                     }
                 }

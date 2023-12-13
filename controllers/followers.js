@@ -6,9 +6,11 @@ const { upload, uploadmulti } = require('../multer/multer');
 const follow = async (req, res) => {
     return new Promise(async (resolve) => {
         try {
+            const sqForDeleteFollowRequest = `DELETE FROM followers WHERE follower_id = ? AND user_id = ?`;
             const sql = `INSERT INTO followers SET ?`;
             const sqlForUsername = 'SELECT * FROM users where username = ? ';
             const sqlForFollowed = `SELECT * FROM followers WHERE follower_id = ? AND user_id = ?`;
+            const sqlForUser = `SELECT * FROM users WHERE id = ?`;
             const username = req.body.username;
             const result = await dbhelper(sqlForUsername, username);
             if (result == "") {
@@ -32,14 +34,17 @@ const follow = async (req, res) => {
                             return
                         }
                         resolve(successfuly.follow_request_sended);
+                        const source = await dbhelper(sqlForUser,req.id)
                         const notification = {
                             target: result[0]?.id,
                             source: req.id,
-                            type: "follow request accepted"
+                            type: "follow",
                         }
                         notifications(notification);
                         return
                     } else {
+                        const deletefollowrequest = await dbhelper(sqForDeleteFollowRequest,[req.id, result[0]?.id])
+                        if(deletefollowrequest == ""){resolve(failure.server_error);return}
                         resolve(failure.follow_request_already_sended);
                         return
                     }
@@ -98,12 +103,6 @@ const acceptfollowrequest = async (req, res) => {
                 return
             } else {
                 resolve(successfuly.follow_request_accepted);
-                const notification = {
-                    target: followerid[0].id,
-                    source: req.id,
-                    type: "follow request accepted"
-                }
-                notifications(notification);
                 return
             }
         } catch (error) {
@@ -142,7 +141,7 @@ const followed = async (req, res) => {
             const sqlForFollowers = `SELECT username,photo FROM users WHERE id IN (SELECT user_id FROM followers WHERE follower_id = ?)`;
             const followed = await dbhelper(sqlForFollowers,req.id);
             if(followed==""){
-                resolve(failure.there_is_nothing_to_show)
+                resolve(successfuly.there_is_nothing_to_show)
             }else{
                 const response = {
                     message:successfuly.followed_showed.message,
@@ -228,7 +227,6 @@ const liked = async (req, res) => {
                 }
             } else {
                 const newlike = {
-                    id: uuidv1(),
                     user_id: req.id,
                     post_id: postid,
                 };
@@ -241,12 +239,6 @@ const liked = async (req, res) => {
                         resolve(failure.server_error);
                     } else {
                         resolve(successfuly.like_added);
-                        const notification = {
-                            target: postavailable[0]?.user_id,
-                            source: req?.id,
-                            type: "like"
-                        }
-                        notifications(notification);
                     }
                 }
             }
@@ -279,12 +271,6 @@ const addcoment = async (req, res) => {
                     return
                 } else {
                     resolve(successfuly.comment_added);
-                    const notification = {
-                        target: postavailable[0]?.user_id,
-                        source: req.id,
-                        type: "comment",//bu ayarlanacak
-                    }
-                    notifications(notification);
                     return
                 }
             }

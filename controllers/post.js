@@ -45,6 +45,22 @@ const addpost = async (req, res) => {
 
     })
 }
+const deletepost = async(req,res)=>{
+    return new Promise(async(resolve) =>{
+        try {
+            const sqlForPost = `SELECT user_id from posts WHERE id = ?`;
+            const sqlForDeletePost = `DELETE FROM posts WHERE id = ?`;
+            const userid = await dbhelper(sqlForPost,req.body?.post_id);
+            if(req.id!=userid[0].user_id){resolve(failure.server_error);return}
+            const deletePost = await dbhelper(sqlForDeletePost,req.body?.post_id);
+            if(deletePost.affectedRows==0){resolve(failure.post_not_found);return}
+            resolve(successfuly.post_deleted)
+        } catch (error) {
+            resolve(failure.server_error);
+            return
+        }
+    })
+}
 const addpostimage = async (req, res, id) => {
     return new Promise(async (resolve) => {
         try {
@@ -67,11 +83,13 @@ const addpostimage = async (req, res, id) => {
 const addpostmaterial = async (req, res, id) => {
     return new Promise(async (resolve) => {
         try {
+            const materials = req.body.materials;
+            const materialArray = Array.isArray(materials) ? materials : [materials];
             const sqlForMaterial = 'INSERT INTO material SET ?';
-            for (let i = 0; i < req.body?.materials?.length; i++) {
+            for (let i = 0; i < materialArray.length; i++) {
                 const material = {
                     id: uuidv1(),
-                    title: req.body?.materials[i],
+                    title: materialArray[i],
                     post_id: id
                 }
                 await dbhelper(sqlForMaterial, material);
@@ -111,4 +129,4 @@ const postedit = async (req, res) => {
 
     })
 }
-module.exports = { addpost, postedit };
+module.exports = { addpost, postedit, deletepost };

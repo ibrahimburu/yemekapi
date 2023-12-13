@@ -28,7 +28,9 @@ const addcomment = async (req, res) => {
                     const notification = {
                         target: postavailable[0]?.user_id,
                         source: req.id,
-                        type: "comment",//bu ayarlanacak
+                        type: "comment",
+                        body:{
+                        }
                     }
                     notifications(notification);
                     return
@@ -40,6 +42,24 @@ const addcomment = async (req, res) => {
         }
     })
 };
+const deletecomment = async(req,res)=>{
+    return new Promise(async(resolve) => {
+        try {
+            const sql = `DELETE FROM comments WHERE id = ?`;
+            const deleteComment = await dbhelper(sql,req.body?.id);
+            if(deleteComment.affectedRows==0){
+                resolve(failure.server_error);
+                return
+            }else{
+                resolve(successfuly.comment_deleted)
+                return
+            }
+        } catch (error) {
+            resolve(failure.server_error);
+            return
+        }
+    })
+}
 const showcomment = async (req, res) => {
     return new Promise(async (resolve) => {
         try {
@@ -50,7 +70,7 @@ const showcomment = async (req, res) => {
             const post_id = req.params.id;
             const comments = await dbhelper(sqlForComment, post_id);
             if (comments == "") {
-                resolve(failure.there_is_nothing_to_show);
+                resolve(successfuly.there_is_nothing_to_show);
             } else {
                 let i;
                 let data = [];
@@ -58,8 +78,8 @@ const showcomment = async (req, res) => {
                 for (i = 0; i < comments.length; i++) {
                     const user = await dbhelper(sqlForUser, comments[i].user_id);
                     const likeCount = await dbhelper(sqlForCommentLikeCount, comments[i].id);
-                    const isLiked = await dbhelper(sqlForCommentLiked, [comments[i].id, user[0].id]);
-                    if(isLiked != ""){likestatus = true}
+                    const isLiked = await dbhelper(sqlForCommentLiked, [comments[i].id, req.id]);
+                    if(isLiked != ""){likestatus = true}else{likestatus = false}
                     data.push({
                          comment_id: comments[i].id,
                          comment_body: comments[i].body,
@@ -70,28 +90,17 @@ const showcomment = async (req, res) => {
                          created_at:comments[i].created_at
                     })
                 }
-                // const user =await Promise.all(comments.map(async (comment) => {
-                //     const userData = await dbhelper(sqlForUser, comment.user_id);
-                //     return { ...comment, ...userData[0] };
-                // }));
-                // const data = await Promise.all(user.map(async(comment) => {
-                //     const count = await dbhelper(sqlForCommentLikeCount,comment.id);
-                //     const cData = {...comment, ...count[0]};
-                //     delete cData.user_id 
-                //     return cData
-                // }))
-
-                // const isLiked = await Promise.all(data.map((user) => {})) await dbhelper(sqlForCommentLiked);
-                result = {
-                    message: successfuly.comment_added.message,
-                    code: successfuly.comment_added.code,
-                    status: successfuly.comment_added.status,
+                const result = {
+                    code: successfuly.comment_showed.code,
+                    message: successfuly.comment_showed.message,
+                    status: successfuly.comment_showed.status,
                     comments: data
                 }
+                console.log(result)
+                console.log("asdasd")
                 resolve(result)
             }
         } catch (error) {
-            console.log(error)
             resolve(failure.server_error);
             return
         }
@@ -100,17 +109,19 @@ const showcomment = async (req, res) => {
 const addcommentlike = async (req, res) => {
     return new Promise(async (resolve) => {
         try {
+            const sqlForComment = `SELECT * FROM comments where id = ?`;
             const sqForLike = `SELECT * FROM comment_like WHERE user_id = ? AND comment_id = ?`;
             const sqForDeleteLike = `DELETE FROM comment_like WHERE user_id = ? AND comment_id = ?`;
             const sqlForCommentLike = `INSERT INTO comment_like SET ?`;
             const already_liked = await dbhelper(sqForLike, [req.id, req.body?.comment_id]);
+            const comment_exist = await dbhelper(sqlForComment, req.body?.comment_id);
+            if(comment_exist == ""){resolve(failure.server_error);return}
             if (already_liked != "") {
-                console.log(await dbhelper(sqForDeleteLike, [req.id, req.body?.comment_id]))
+                await dbhelper(sqForDeleteLike, [req.id, req.body?.comment_id])
                 resolve(successfuly.unliked);
                 return
             } else {
                 const newcomment_like = {
-                    id: uuidv1(),
                     user_id: req.id,
                     comment_id: req?.body?.comment_id
                 }
@@ -131,4 +142,4 @@ const addcommentlike = async (req, res) => {
     })
 }
 
-module.exports = { addcomment, addcommentlike, showcomment };
+module.exports = { addcomment, addcommentlike, showcomment, deletecomment };

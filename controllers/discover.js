@@ -26,7 +26,7 @@ const requestdiscovred = async(req,res)=>{
         offset==null ? offset = 0:offset=parseInt(offset);
         const posts = await dbhelper(sql,[userid,offset]);
         if(posts==""){
-            resolve(failure.there_is_nothing_to_show);
+            resolve(successfuly.there_is_nothing_to_show);
         }else{
             let postarray = [];
             let i;

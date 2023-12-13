@@ -49,6 +49,11 @@ const failure = {
         "message":"user_name_to_short",
         "status":false
     },
+    wrong_character:{
+        "code":400,
+        "message":"wrong_character",
+        "status":false
+    },
     account_already_verified:{
         "code":400,
         "message":"account_already_verified",
@@ -107,11 +112,6 @@ const failure = {
     avatar_not_added:{
         "code":400,
         "message":"avatar_not_added",
-        "status":false
-    },
-    there_is_nothing_to_show:{
-        "code":400,
-        "message":"there_is_nothing_to_show",
         "status":false
     },
     follow_request_already_sended:{
@@ -176,6 +176,11 @@ const successfuly = {
     post_updated:{
         "code":200,
         "message":"post_updated",
+        "status":true
+    },
+    post_deleted:{
+        "code":200,
+        "message":"post_deleted",
         "status":true
     },
     like_added:{
@@ -246,6 +251,36 @@ const successfuly = {
     post_showed:{
         "code":200,
         "message":"postdetails_showed",
+        "status":true
+    },
+    comment_showed:{
+        "code":200,
+        "message":"comment_showed",
+        "status":true
+    },
+    comment_deleted:{
+        "code":200,
+        "message":"comment_deleted",
+        "status":true
+    },
+    logout:{
+        "code":200,
+        "message":"logout",
+        "status":true
+    },
+    there_is_nothing_to_show:{
+        "code":200,
+        "message":"there_is_nothing_to_show",
+        "status":true
+    },
+    Notifications_showed:{
+        "code":200,
+        "message":"Notifications_showed",
+        "status":true
+    },
+    user_name_changed:{
+        "code":200,
+        "message":"user_name_changed",
         "status":true
     }
 }
