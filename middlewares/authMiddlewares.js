@@ -7,13 +7,22 @@ const auth = async(req,res,next) => {
     if(token){
         try {
             const sqlFortoken = 'SELECT * FROM token WHERE token = ?';
+            const sqlForUser = `SELECT * FROM users WHERE username = ?`;
+            const sqlForDeleteToken = `DELETE FROM token WHERE token = ?`;
             const tokenexist =await dbhelper(sqlFortoken,token);
             if(tokenexist==''){
               res.status(failure.you_must_be_login.code).json(failure.you_must_be_login);
+              return
             }else{
               const decoded = jwt.verify(token, process.env.SCREETKEY);
               req.id=decoded.id;
               req.username=decoded.username;
+              const userExist = await dbhelper(sqlForUser,decoded.username);
+              if(userExist == ""){
+                await dbhelper(sqlForDeleteToken,token)
+                res.status(failure.you_must_be_login.code).json(failure.you_must_be_login);
+                return
+              } 
             next();
             }
           } catch (error) {

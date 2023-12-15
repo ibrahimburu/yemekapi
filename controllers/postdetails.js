@@ -45,7 +45,7 @@ const postdetails = async(req,res)=>{
                     post_materials:material,
                     post_created_at:post[0]?.created_at,
                     user_name:user[0]?.username,
-                    user_avatar:user[0]?.photo,
+                    user_avatar:url+user[0]?.photo,
                     like_count:likecount[0].liked,
                     comment_count:commentCount[0].comment,
                     liked_by_user:already_liked

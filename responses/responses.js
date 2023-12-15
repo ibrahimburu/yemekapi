@@ -203,6 +203,11 @@ const successfuly = {
         "message":"follow_request_sended",
         "status":true
     },
+    follow_request_deleted:{
+        "code":200,
+        "message":"follow_request_deleted",
+        "status":true
+    },
     followers_showed:{
         "code":200,
         "message":"followers_showed",
@@ -281,6 +286,16 @@ const successfuly = {
     user_name_changed:{
         "code":200,
         "message":"user_name_changed",
+        "status":true
+    },
+    bio_updated:{
+        "code":200,
+        "message":"bio_updated",
+        "status":true
+    },
+    notification_sended:{
+        "code":200,
+        "message":"notification_sended",
         "status":true
     }
 }

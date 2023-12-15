@@ -47,7 +47,7 @@ const requesthompage = async(req,res)=>{
                     like_count:likecount[0].liked,
                     comment_count:commentCount[0].comment,
                     user_name:user[0]?.username,
-                    user_avatar:user[0]?.photo,
+                    user_avatar:url + user[0]?.photo,
                     liked_by_user:already_liked
                 })
             }

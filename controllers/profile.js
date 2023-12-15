@@ -8,8 +8,8 @@ const myProfile = async (req, res) => {
         const sqlForPosts = `SELECT * FROM posts WHERE user_id = ? AND status = true ORDER BY created_at DESC`;
         const sqlForPhotos = `SELECT * FROM posts_image where post_id = ?`;
         const sqlForUser = `SELECT * FROM users WHERE username = ?`;
-        const sqlForFollowersCount = `SELECT Count(*) as follower FROM followers WHERE user_id = ?`;
-        const sqlForFollowCount = `SELECT Count(*) as follow FROM followers WHERE follower_id = ?`;
+        const sqlForFollowersCount = `SELECT Count(*) as follower FROM followers WHERE user_id = ? AND status = true`;
+        const sqlForFollowCount = `SELECT Count(*) as follow FROM followers WHERE follower_id = ? AND status = true`;
         const sqlForUsername = `SELECT username as name FROM users WHERE id = ?`;
         const user_name = req.params.username.trim().toLocaleLowerCase('tr-TR');
         try {
@@ -52,7 +52,7 @@ const myProfile = async (req, res) => {
                             status: successfuly.post_showed.status,
                             user_name: user[0]?.username,
                             user_bio: user[0]?.bio,
-                            user_avatar: user[0]?.photo,
+                            user_avatar: url+user[0]?.photo,
                             followers: followersCount[0]?.follower,
                             follow: followCount[0]?.follow,
                             post_count: postCount,
@@ -97,7 +97,7 @@ const myProfile = async (req, res) => {
                         status: successfuly.post_showed.status,
                         user_name: user[0]?.username,
                         user_bio: user[0]?.bio,
-                        user_avatar: user[0]?.photo,
+                        user_avatar: url+user[0]?.photo,
                         followers: followersCount[0]?.follower,
                         follow: followCount[0]?.follow,
                         post_count: postCount,

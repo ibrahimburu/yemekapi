@@ -1,7 +1,8 @@
 const { dbhelper } = require('../models/database');
 const { failure, successfuly } = require('../responses/responses');
 const { v1: uuidv1 } = require('uuid');
-const notifications = require('../controllers/notifications');
+const {notifications} = require('../controllers/notifications');
+const dotenv = require('dotenv');
 const addcomment = async (req, res) => {
     return new Promise(async (resolve) => {
         try {
@@ -24,15 +25,16 @@ const addcomment = async (req, res) => {
                     resolve(failure.server_error);
                     return
                 } else {
-                    resolve(successfuly.comment_added);
                     const notification = {
                         target: postavailable[0]?.user_id,
                         source: req.id,
                         type: "comment",
-                        body:{
-                        }
+                        body: postavailable[0]?.id
                     }
-                    notifications(notification);
+                    if(notification.target != notification.source){
+                        notifications(notification);
+                    }
+                    resolve(successfuly.comment_added);
                     return
                 }
             }
@@ -63,7 +65,8 @@ const deletecomment = async(req,res)=>{
 const showcomment = async (req, res) => {
     return new Promise(async (resolve) => {
         try {
-            const sqlForComment = `SELECT id,user_id,body,created_at FROM comments where post_id = ?`;
+            const url = process.env.IMAGEURL;
+            const sqlForComment = `SELECT id,user_id,body,created_at FROM comments where post_id = ? ORDER BY created_at DESC`;
             const sqlForUser = `SELECT username,photo FROM users where id = ?`;
             const sqlForCommentLikeCount = `SELECT Count(*) as comment_like_count FROM comment_like WHERE comment_id = ?`;
             const sqlForCommentLiked = `SELECT * FROM comment_like WHERE comment_id = ? AND user_id= ?`;
@@ -84,7 +87,7 @@ const showcomment = async (req, res) => {
                          comment_id: comments[i].id,
                          comment_body: comments[i].body,
                          user_name: user[0].username,
-                         user_avatar: user[0].photo,
+                         user_avatar: url+user[0].photo,
                          comment_like_count:likeCount[0].comment_like_count,
                          liked_by_user:likestatus,
                          created_at:comments[i].created_at
@@ -96,8 +99,6 @@ const showcomment = async (req, res) => {
                     status: successfuly.comment_showed.status,
                     comments: data
                 }
-                console.log(result)
-                console.log("asdasd")
                 resolve(result)
             }
         } catch (error) {
@@ -130,6 +131,15 @@ const addcommentlike = async (req, res) => {
                     resolve(failure.server_error);
                     return
                 } else {
+                    const notification = {
+                        target: comment_exist[0]?.user_id,
+                        source: req.id,
+                        type: "comment_like",
+                        body: comment_exist[0]?.post_id
+                    }
+                    if(notification.target != notification.source){
+                        notifications(notification);
+                    }
                     resolve(successfuly.like_added);
                     return
                 }

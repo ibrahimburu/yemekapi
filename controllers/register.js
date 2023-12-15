@@ -34,7 +34,7 @@ const create_newUser = async (req, res) => {
     return new Promise(async resolve => {
         try {
             const userName = req.body.username;
-            console.log(userName.toLocaleLowerCase('tr-TR'))
+            userName.toLocaleLowerCase('tr-TR')
             const email = req.body.email;
             const sqlForEmail = 'SELECT * FROM users WHERE email = ?';
             const sqlForUserName = 'SELECT * FROM users WHERE username = ?';
@@ -75,7 +75,6 @@ const create_newUser = async (req, res) => {
                 resolve(registered);
             }
         } catch (error) {
-            console.log(error)
             resolve(error);
             return
         }
@@ -92,6 +91,7 @@ const update_username = async (req, res) => {
             const sqlForToken = `INSERT INTO token SET ?`
             const userid = req.id;
             const username = req.username;
+            if(req.body.username == undefined){resolve(failure.server_error);return}
             const newusername = req.body.username.toLocaleLowerCase('tr-TR');
             const user = await dbhelper(sqlForid, userid);
             if (user != "") {

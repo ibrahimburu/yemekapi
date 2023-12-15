@@ -11,10 +11,8 @@ const login = async (req, res) => {
             const device = req?.headers?.device==undefined|null ? "":req?.headers?.device;
             const ip_address = req?.connection?.remoteAddress==undefined|null ? "":req?.connection?.remoteAddress;
             const userName = (req.body.username).trim().toLocaleLowerCase('tr-TR');
-            console.log(userName)
             const sqlForToken = `INSERT INTO token SET ?`;
             const isUser = await dbhelper(sqlForUserName, userName);
-            console.log(isUser)
             if ((isUser[0]?.username == undefined)) {
                 resolve(failure.user_name_is_not_exist);
                 return
