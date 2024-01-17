@@ -9,7 +9,6 @@ const storage = multer.diskStorage({
         const uniqname=uuidv1()+".jpg";
         cb(null,uniqname);
     }
-
 })
 const upload = multer({storage:storage}).single('file');
 const uploadmulti = multer({storage:storage}).array('files',3);

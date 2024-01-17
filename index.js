@@ -29,7 +29,7 @@ app.get('/', (req,res) =>{
     res.json({message:"hello"})
 })
 app.use('/api/register',registerRouter);
-app.use('/api/login',loginRouter);
+app.use('/api',loginRouter);
 app.use('/api/verify',verifyRouter);
 app.use('/api/password',passwordRouter);
 app.use('/api/post',postRouter);

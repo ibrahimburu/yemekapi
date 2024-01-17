@@ -297,6 +297,21 @@ const successfuly = {
         "code":200,
         "message":"notification_sended",
         "status":true
+    },
+    record_added:{
+        "code":200,
+        "message":"record_added",
+        "status":true
+    },
+    record_deleted:{
+        "code":200,
+        "message":"record_deleted",
+        "status":true
+    },
+    record_posts_showing:{
+        "code":200,
+        "message":"record_posts_showing",
+        "status":true
     }
 }
 

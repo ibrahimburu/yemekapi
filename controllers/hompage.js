@@ -5,7 +5,7 @@ dotenv.config();
 const requesthompage = async(req,res)=>{
     return new Promise(async(resolve)=>{
         const url = process.env.IMAGEURL;
-        const sqlForPosts = `SELECT * FROM posts WHERE user_id in (SELECT user_id FROM followers where follower_id = ?) AND status = true ORDER BY created_at DESC LIMIT 20 OFFSET ?`;
+        const sqlForPosts = `SELECT * FROM posts WHERE user_id in (SELECT user_id FROM followers where follower_id = ? AND status = true) AND status = true ORDER BY created_at DESC LIMIT 20 OFFSET ?`;
         const sqlForPhoto = `SELECT * FROM posts_image WHERE post_id = ?`;
         const sqlForMaterial = `SELECT * FROM material WHERE post_id = ?`;
         const sqlForLikeCount = `SELECT Count(*) as liked FROM likes where post_id = ?`;

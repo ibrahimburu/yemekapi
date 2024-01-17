@@ -1,7 +1,7 @@
 const express = require('express');
 const useroperationsRouter = express.Router();
 const {auth} = require('../middlewares/authMiddlewares');
-const {follow, search, followerrequest, liked, addavatar, acceptfollowrequest, deletefollowrequest, followers, followed, updatebio} = require('../controllers/followers');
+const {follow, search, followerrequest, liked, addavatar, acceptfollowrequest, deletefollowrequest, followers, followed, updatebio, searchByPostTitle, searchByMaterial} = require('../controllers/followers');
 
 useroperationsRouter.get('/followers',auth,async (req,res)=>{
     const result = await followers(req);
@@ -21,6 +21,14 @@ useroperationsRouter.post('/follow',auth,async(req,res)=>{
 })
 useroperationsRouter.post('/search',auth,async(req,res)=>{
     const result = await search(req);
+    res.status(result.code).json(result);
+})
+useroperationsRouter.post('/searchByPostTitle',auth,async(req,res)=>{
+    const result = await searchByPostTitle(req);
+    res.status(result.code).json(result);
+})
+useroperationsRouter.post('/searchByPostMaterial',auth,async(req,res)=>{
+    const result = await searchByPostTitle(req);
     res.status(result.code).json(result);
 })
 useroperationsRouter.get('/showfollowerequest',auth,async(req,res)=>{

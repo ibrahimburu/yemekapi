@@ -1,6 +1,6 @@
 const { dbhelper } = require('../models/database');
 const { failure, successfuly } = require('../responses/responses');
-const {notifications} = require('../controllers/notifications');
+const { notifications } = require('../controllers/notifications');
 const { upload, uploadmulti } = require('../multer/multer');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -44,8 +44,8 @@ const follow = async (req, res) => {
                         notifications(notification);
                         return
                     } else {
-                        const deletefollowrequest = await dbhelper(sqForDeleteFollowRequest,[req.id, result[0]?.id])
-                        if(deletefollowrequest == ""){resolve(failure.server_error);return}
+                        const deletefollowrequest = await dbhelper(sqForDeleteFollowRequest, [req.id, result[0]?.id])
+                        if (deletefollowrequest == "") { resolve(failure.server_error); return }
                         resolve(successfuly.follow_request_deleted);
                         return
                     }
@@ -117,23 +117,23 @@ const followers = async (req, res) => {
     return new Promise(async (resolve) => {
         try {
             const sqlForFollowers = `SELECT username,photo FROM users WHERE id IN (SELECT follower_id FROM followers WHERE user_id = ? AND status = true)`;
-            const followers = await dbhelper(sqlForFollowers,req.id);
-            if(followers==""){
+            const followers = await dbhelper(sqlForFollowers, req.id);
+            if (followers == "") {
                 resolve(successfuly.there_is_nothing_to_show)
-            }else{
+            } else {
                 let i;
-                for(i=0;i<followers.length;i++){
-                    followers[i].photo =url + followers[i].photo
+                for (i = 0; i < followers.length; i++) {
+                    followers[i].photo = url + followers[i].photo
                 }
                 const response = {
-                    message:successfuly.followers_showed.message,
-                    code:successfuly.followers_showed.code,
-                    status:successfuly.followers_showed.status,
-                    users:followers
+                    message: successfuly.followers_showed.message,
+                    code: successfuly.followers_showed.code,
+                    status: successfuly.followers_showed.status,
+                    users: followers
                 }
                 resolve(response);
             }
-            
+
         } catch (error) {
             console.log(error)
             resolve(failure.server_error);
@@ -144,23 +144,23 @@ const followed = async (req, res) => {
     return new Promise(async (resolve) => {
         try {
             const sqlForFollowers = `SELECT username,photo FROM users WHERE id IN (SELECT user_id FROM followers WHERE follower_id = ? AND status = true)`;
-            const followed = await dbhelper(sqlForFollowers,req.id);
-            if(followed==""){
+            const followed = await dbhelper(sqlForFollowers, req.id);
+            if (followed == "") {
                 resolve(successfuly.there_is_nothing_to_show)
-            }else{
+            } else {
                 let i;
-                for(i=0;i<followed.length;i++){
-                    followed[i].photo =url + followed[i].photo
+                for (i = 0; i < followed.length; i++) {
+                    followed[i].photo = url + followed[i].photo
                 }
                 const response = {
-                    message:successfuly.followed_showed.message,
-                    code:successfuly.followed_showed.code,
-                    status:successfuly.followed_showed.status,
-                    users:followed
+                    message: successfuly.followed_showed.message,
+                    code: successfuly.followed_showed.code,
+                    status: successfuly.followed_showed.status,
+                    users: followed
                 }
                 resolve(response);
             }
-            
+
         } catch (error) {
             console.log(error)
             resolve(failure.server_error);
@@ -188,35 +188,122 @@ const deletefollowrequest = async (req, res) => {
         }
     })
 };
+
 const search = async (req, res) => {
     return new Promise(async (resolve) => {
         try {
             const sqlForUsreName = 'SELECT * FROM users WHERE username LIKE ?';
             const name = `${req.body.username}%`;
-            if(name == '%'){
+            if (name == '%') {
                 const response = {
-                message: successfuly.comment_added.message,
-                code: successfuly.comment_added.code,
-                status: successfuly.comment_added.status,
-                users: []
+                    message: successfuly.there_is_nothing_to_show.message,
+                    code: successfuly.there_is_nothing_to_show.code,
+                    status: successfuly.there_is_nothing_to_show.status,
+                    users: []
+                }
+                resolve(response);
+                return
             }
-            resolve(response);
-            return
-        }
             const result = await dbhelper(sqlForUsreName, name);
             if (result == "") {
-                resolve(failure.server_error);
+                resolve(successfuly.there_is_nothing_to_show);
                 return
             } else {
                 let users = [];
                 for (let i = 0; i < result.length; i++) {
-                    users[i] = { username: result[i].username, photo: url+result[i].photo }
+                    users[i] = { username: result[i].username, photo: url + result[i].photo }
                 }
                 const response = {
                     message: successfuly.comment_added.message,
                     code: successfuly.comment_added.code,
                     status: successfuly.comment_added.status,
                     users: users
+                }
+                resolve(response);
+                return
+            }
+        } catch (error) {
+            resolve(failure.server_error);
+            return
+        }
+    })
+};
+const searchByPostTitle = async (req, res) => {
+    return new Promise(async (resolve) => {
+        try {
+            const sqlForPostTitle = 'SELECT * FROM posts WHERE title LIKE ?';
+            const sqlForPhoto = `SELECT * FROM posts_image WHERE post_id = ?`;
+            const title = `%${req.body.title}%`;
+            if (title == '%%') {
+                const response = {
+                    message: successfuly.there_is_nothing_to_show.message,
+                    code: successfuly.there_is_nothing_to_show.code,
+                    status: successfuly.there_is_nothing_to_show.status,
+                    posts: []
+                }
+                resolve(response);
+                return
+            }
+            const result = await dbhelper(sqlForPostTitle, title);
+            if (result == "") {
+                resolve(successfuly.there_is_nothing_to_show);
+                return
+            } else {
+                let posts = [];
+                for (let i = 0; i < result.length; i++) {
+                    const photo = await dbhelper(sqlForPhoto, result[i].id);
+                    const photosource = photo.map(({ source }) => url + source);
+                    posts[i] = { post_id: result[i].id, post_title: result[i].title, post_images: [photosource[0]] }
+                }
+                const response = {
+                    message: successfuly.comment_added.message,
+                    code: successfuly.comment_added.code,
+                    status: successfuly.comment_added.status,
+                    posts: posts
+                }
+                resolve(response);
+                return
+            }
+        } catch (error) {
+            resolve(failure.server_error);
+            return
+        }
+    })
+};
+const searchByMaterial = async (req, res) => {
+    return new Promise(async (resolve) => {
+        try {
+            const sqlForMaterialTitle = 'SELECT * FROM material WHERE title LIKE ?';
+            const sqlForPost = `SELECT * FROM posts WHERE id = ?`;
+            const sqlForPhoto = `SELECT * FROM posts_image WHERE post_id = ?`;
+            const title = `%${req.body.title}%`;
+            if (title == '%%') {
+                const response = {
+                    message: successfuly.there_is_nothing_to_show.message,
+                    code: successfuly.there_is_nothing_to_show.code,
+                    status: successfuly.there_is_nothing_to_show.status,
+                    posts: []
+                }
+                resolve(response);
+                return
+            }
+            const result = await dbhelper(sqlForMaterialTitle, title);
+            if (result == "") {
+                resolve(successfuly.there_is_nothing_to_show);
+                return
+            } else {
+                let posts = [];
+                for (let i = 0; i < result.length; i++) {
+                    const post = await dbhelper(sqlForPost, result[i].post_id)
+                    const photo = await dbhelper(sqlForPhoto, result[i].post_id);
+                    const photosource = photo.map(({ source }) => url + source);
+                    posts[i] = { post_id: result[i].id, post_title: post[0].title, post_images: [photosource[0]] }
+                }
+                const response = {
+                    message: successfuly.comment_added.message,
+                    code: successfuly.comment_added.code,
+                    status: successfuly.comment_added.status,
+                    posts: posts
                 }
                 resolve(response);
                 return
@@ -238,7 +325,7 @@ const liked = async (req, res) => {
             const postavailable = await dbhelper(sqlForPostid, postid);
             if (postavailable == "") {
                 resolve(failure.post_not_found);
-            }else {
+            } else {
                 const alreadyLiked = await dbhelper(sqlForLike, [req.id, postid]);
                 if (alreadyLiked != "" | null | undefined) {
                     const deleteLike = await dbhelper(sqlForDeleteLike, [req.id, postid]);
@@ -253,21 +340,21 @@ const liked = async (req, res) => {
                         user_id: req.id,
                         post_id: postid,
                     };
-                        const like = await dbhelper(sql, newlike);
-                        if (like == "") {
-                            resolve(failure.server_error);
-                        } else {
-                            const notification = {
-                                target: postavailable[0]?.user_id,
-                                source: req.id,
-                                type: "post_like",
-                                body: postavailable[0]?.id
-                            }
-                            if(notification.target != notification.source){
-                                notifications(notification);
-                            }
-                            resolve(successfuly.like_added);
-                        }                 
+                    const like = await dbhelper(sql, newlike);
+                    if (like == "") {
+                        resolve(failure.server_error);
+                    } else {
+                        const notification = {
+                            target: postavailable[0]?.user_id,
+                            source: req.id,
+                            type: "post_like",
+                            body: postavailable[0]?.id
+                        }
+                        if (notification.target != notification.source) {
+                            notifications(notification);
+                        }
+                        resolve(successfuly.like_added);
+                    }
                 }
             }
         } catch (error) {
@@ -279,6 +366,11 @@ const liked = async (req, res) => {
 const addavatar = async (req, res) => {
     return new Promise(async (resolve) => {
         try {
+            //HATİCE PROFİL FOTOĞRAFINI DEĞİŞEMİYECEK
+            if (req.id == "0b9d9ba0-982e-11ee-94bd-53ec383d677b") {
+                resolve(failure.server_error);
+                return
+            }
             upload(req, res, async function (err) {
                 if (err) {
                     resolve(failure.avatar_not_added);
@@ -307,13 +399,13 @@ const addavatar = async (req, res) => {
 const updatebio = async (req, res) => {
     return new Promise(async (resolve) => {
         try {
-            const sqlForBio =`UPDATE users SET bio = ? WHERE id = ?`;
+            const sqlForBio = `UPDATE users SET bio = ? WHERE id = ?`;
             const bio = req.body?.bio;
-            const updateBio = await dbhelper(sqlForBio,[bio, req.id]);
-            if(updateBio == ""){
+            const updateBio = await dbhelper(sqlForBio, [bio, req.id]);
+            if (updateBio == "") {
                 resolve(failure.server_error);
                 return
-            }else{
+            } else {
                 resolve(successfuly.bio_updated);
                 return
             }
@@ -324,4 +416,4 @@ const updatebio = async (req, res) => {
         }
     })
 }
-module.exports = { follow, search, followerrequest, liked, addavatar, deletefollowrequest, acceptfollowrequest, followers, followed, updatebio };
+module.exports = { follow, search, followerrequest, liked, addavatar, deletefollowrequest, acceptfollowrequest, followers, followed, updatebio, searchByPostTitle, searchByMaterial };

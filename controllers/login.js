@@ -8,9 +8,10 @@ const login = async (req, res) => {
         try {
             const sqlForUserName = 'SELECT * FROM users WHERE username = ?';
             const sqlForDevive = `INSERT INTO info SET ?`;
-            const device = req?.headers?.device==undefined|null ? "":req?.headers?.device;
-            const ip_address = req?.connection?.remoteAddress==undefined|null ? "":req?.connection?.remoteAddress;
+            const device = req?.headers?.device == undefined | null ? "" : req?.headers?.device;
+            const ip_address = req?.connection?.remoteAddress == undefined | null ? "" : req?.connection?.remoteAddress;
             const userName = (req.body.username).trim().toLocaleLowerCase('tr-TR');
+            const fcm_token = req.body.fcm_token == undefined | null ? "" : req.body.fcm_token;
             const sqlForToken = `INSERT INTO token SET ?`;
             const isUser = await dbhelper(sqlForUserName, userName);
             if ((isUser[0]?.username == undefined)) {
@@ -24,21 +25,22 @@ const login = async (req, res) => {
                 return
             } else {
                 const user = {
-                    username:isUser[0].username.toLocaleLowerCase('tr-TR'),
-                    id:isUser[0].id
+                    username: isUser[0].username.toLocaleLowerCase('tr-TR'),
+                    id: isUser[0].id
                 }
                 const token = { token: generateRefreshToken(user) };
                 const info = {
-                    id:uuidv1(),
-                    user_id:isUser[0]?.id,
-                    device:device,
-                    ip_address:ip_address,
-                    fcm_token:null
+                    id: uuidv1(),
+                    user_id: isUser[0]?.id,
+                    device: device,
+                    ip_address: ip_address,
+                    fcm_token: fcm_token
                 }
+                console.log(info)
                 await dbhelper(sqlForToken, token)
                 successfuly.login_successfuly['token'] = token.token
                 resolve(successfuly.login_successfuly);
-                await dbhelper(sqlForDevive,info);
+                await dbhelper(sqlForDevive, info);
                 return
             }
         } catch (error) {
@@ -49,11 +51,13 @@ const login = async (req, res) => {
 
     })
 }
-const logout= async(req,res) => {
-    return new Promise(async(resolve)=>{
+const logout = async (req, res) => {
+    return new Promise(async (resolve) => {
         try {
-            const sql = `DELETE  FROM token WHERE token = ?`;
-            const deleteToken = await dbhelper(sql,req.headers.token);
+            const sql = `DELETE FROM token WHERE token = ?`;
+            const sqlForDeleteInfo = `DELETE FROM info WHERE user_id = ?`;
+            const deleteInfo = await dbhelper(sqlForDeleteInfo, req.id)
+            const deleteToken = await dbhelper(sql, req.headers.token);
             resolve(successfuly.logout);
             return
         } catch (error) {
@@ -62,4 +66,4 @@ const logout= async(req,res) => {
         }
     })
 }
-module.exports = {login, logout};
+module.exports = { login, logout };

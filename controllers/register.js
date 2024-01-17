@@ -27,7 +27,7 @@ const validateEmail = (email) => {
 };
 function cleanAndValidate(input) {
     const trimmedInput = input.trim();
-    const allowedCharactersRegex = /^[a-z0-9_.]+$/;
+    const allowedCharactersRegex = /^[a-z0-9_.ğüşıöçĞÜŞİÖÇ]+$/i;
     return allowedCharactersRegex.test(trimmedInput);
 }
 const create_newUser = async (req, res) => {
@@ -43,7 +43,7 @@ const create_newUser = async (req, res) => {
             const userName_alreadyHave = await dbhelper(sqlForUserName, userName);
             if ((already_registred[0]?.username.length > 0)) {
                 resolve(failure.already_exist);
-            } else if (!cleanAndValidate(userName.toLocaleLowerCase('tr-TR'))) {
+            } else if (!cleanAndValidate(userName)) {
                 resolve(failure.wrong_character)
             } else if (userName_alreadyHave[0]?.username.length > 0) {
                 resolve(failure.user_name_already_exist);
